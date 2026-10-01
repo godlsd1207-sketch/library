@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.39.3/dist/galmuri.css" media="print" onload="this.media='all'">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+  :root { --sky: #9fd4f5; --grass: #6cbf3a; --grass-dark: #4f8f28; --dirt: #8b5a2b; --dirt-dark: #6b4220;
+    --panel: #f4ead6; --panel-dark: #d9c7a3; --ink: #3a2a1a; --muted: #7a6650; --ok: #3f8f3a; --warn: #c0392b; --gold: #f2c230; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; min-height: 100%; background: var(--sky); color: var(--ink);
+    font-family: "Jua", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; font-size: 18px; }
+  button, input, textarea { font-family: inherit; }
+  .pix { font-family: "Galmuri11", "Jua", sans-serif; }
+
+   
+  header { position: sticky; top: 0; z-index: 5; background: var(--sky); padding: 12px 14px 0; }
+  .top { display: flex; align-items: center; gap: 10px; max-width: 520px; margin: 0 auto; }
+  .top h1 { margin: 0; font-size: 21px; flex: 1; color: #fff; text-shadow: 2px 2px 0 #2c5d8a; }
+  .lock { border: none; background: rgba(255,255,255,.6); border-radius: 10px; padding: 6px 10px; font-size: 15px; color: var(--muted); }
+  .hello { max-width: 520px; margin: 6px auto 0; display: flex; gap: 8px; align-items: center; color: #23476b; font-size: 17px; }
+  .fire { margin-left: auto; background: #fff; border-radius: 999px; padding: 3px 12px; color: #c0392b; font-size: 16px; }
+  .ground { height: 18px; margin-top: 10px; background:
+    linear-gradient(var(--grass) 0 9px, var(--dirt) 9px 100%); border-top: 3px solid var(--grass-dark); }
+
+  main { max-width: 520px; margin: 0 auto; padding: 14px 14px 110px; background: var(--dirt); min-height: calc(100vh - 110px); }
+  .screen { display: none; } .screen.on { display: block; }
+  .card { background: var(--panel); border: 4px solid var(--panel-dark); border-radius: 6px; padding: 16px; margin-bottom: 14px;
+    box-shadow: 0 4px 0 rgba(0,0,0,.25); }
+  .card h2 { margin: 0 0 10px; font-size: 21px; }
+  .muted { color: var(--muted); font-size: 16px; }
+  .btn { display: block; width: 100%; padding: 16px; font-size: 22px; border: none; border-radius: 6px; color: #fff;
+    background: var(--grass); box-shadow: 0 5px 0 var(--grass-dark); margin-top: 10px; }
+  .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--grass-dark); }
+  .btn.brown { background: #a8743f; box-shadow: 0 5px 0 var(--dirt-dark); }
+  .btn.gray { background: #9a9a9a; box-shadow: 0 5px 0 #6a6a6a; }
+  .btn.red { background: #d0654f; box-shadow: 0 5px 0 #9c3f2c; }
+  .btn:disabled { opacity: .45; }
+  .bubble { background: #fff; border-radius: 14px; padding: 12px 14px; position: relative; margin-top: 8px; }
+  .bubble::before { content: ""; position: absolute; left: 22px; top: -10px; border: 10px solid transparent; border-top: 0; border-bottom-color: #fff; }
+
+   
+  .chest-card { text-align: center; background: #fff3c4; border-color: var(--gold); }
+  .chest-card svg { width: 96px; height: 96px; animation: wiggle 1.2s ease-in-out infinite; }
+  @keyframes wiggle { 0%,100% { transform: rotate(0); } 20% { transform: rotate(-8deg); } 40% { transform: rotate(8deg); } 60% { transform: rotate(-4deg); } }
+  .reveal { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 12px 0; }
+  .reveal .it { animation: pop .5s ease both; text-align: center; }
+  @keyframes pop { from { transform: scale(0); } 70% { transform: scale(1.2); } to { transform: scale(1); } }
+
+   
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .slot { background: #c6c6c6; border: 3px solid; border-color: #fff #555 #555 #fff; padding: 8px 4px; text-align: center; position: relative; }
+  .slot svg { width: 52px; height: 52px; display: block; margin: 0 auto; }
+  .slot .n { position: absolute; right: 6px; bottom: 22px; color: #fff; font-size: 18px; text-shadow: 2px 2px 0 #333; }
+  .slot .nm { font-size: 14px; margin-top: 4px; }
+  .it svg { width: 56px; height: 56px; }
+  .it div { font-size: 15px; }
+  .ico { display: inline-block; width: 26px; height: 26px; vertical-align: middle; }
+
+   
+  .recipe { display: flex; gap: 10px; align-items: center; }
+  .recipe > svg { width: 56px; height: 56px; flex: none; background: #c6c6c6; border: 3px solid; border-color: #fff #555 #555 #fff; padding: 4px; }
+  .recipe .body { flex: 1; }
+  .recipe .need { font-size: 15px; margin-top: 4px; }
+  .need span { display: inline-flex; align-items: center; gap: 2px; margin-right: 8px; }
+  .need .short { color: var(--warn); }
+  .recipe button { flex: none; width: 82px; margin: 0; padding: 12px 0; font-size: 18px; }
+
+   
+  label.q { display: block; font-size: 20px; margin: 4px 0 8px; }
+  .field { width: 100%; font-size: 20px; padding: 12px; border: 3px solid var(--panel-dark); border-radius: 6px; background: #fff; }
+  textarea.field { min-height: 92px; resize: vertical; line-height: 1.5; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { border: 2px solid var(--panel-dark); background: #fff; border-radius: 999px; padding: 5px 12px; font-size: 16px; }
+  .moods { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .mood { border: 3px solid var(--panel-dark); background: #fff; border-radius: 10px; padding: 6px 0; font-size: 13px; }
+  .mood b { display: block; font-size: 30px; font-weight: normal; }
+  .mood.on { border-color: var(--grass-dark); background: #e2f5d4; }
+  .stars { display: flex; gap: 6px; justify-content: center; }
+  .star { border: none; background: none; font-size: 40px; color: #d6cbb3; padding: 0; }
+  .star.on { color: var(--gold); text-shadow: 0 2px 0 #b8901a; }
+  .pad { position: relative; background: #fff; border: 3px solid var(--panel-dark); border-radius: 6px; height: 240px; }
+  .pad canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+  .tools { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
+  .color { width: 34px; height: 34px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 2px var(--panel-dark); }
+  .color.on { box-shadow: 0 0 0 3px var(--ink); }
+  .color.eraser { width: auto; border-radius: 10px; padding: 0 10px; background: #fff; font-size: 15px; color: var(--ink); }
+  .tools .small { margin-left: auto; border: none; background: #fff; border-radius: 8px; padding: 6px 10px; font-size: 15px; }
+  .count { font-size: 15px; margin-top: 6px; color: var(--muted); }
+  .count.goal { color: var(--ok); }
+  .err { color: var(--warn); min-height: 24px; margin-top: 8px; font-size: 17px; }
+
+   
+  .book { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 2px dashed var(--panel-dark); }
+  .book:last-child { border-bottom: none; }
+  .book .st { color: var(--gold); text-shadow: 0 1px 0 #b8901a; }
+
+   
+  nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: #5a5a5a; border-top: 4px solid #3a3a3a;
+    display: flex; justify-content: center; padding-bottom: env(safe-area-inset-bottom); }
+  nav button { flex: 1; max-width: 110px; border: none; background: none; color: #ddd; padding: 8px 0 10px; font-size: 14px; }
+  nav button svg { width: 30px; height: 30px; display: block; margin: 0 auto 2px; }
+  nav button.on { color: #fff; background: #747474; }
+
+   
+  .minimap { display: inline-grid; border: 4px solid #3a2a1a; border-radius: 4px; background: #6cbf3a; }
+  .minimap i { display: block; }
+   
+  .game { position: fixed; inset: 0; z-index: 50; background: #8fd0f7; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .game[hidden] { display: none; }
+  .game canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  .g-top { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 8px; align-items: center; pointer-events: none; }
+  .g-top button { pointer-events: auto; border: none; border-radius: 10px; padding: 8px 14px; font-size: 17px; background: rgba(0,0,0,.45); color: #fff; }
+  .g-save { margin-left: auto; color: #fff; font-size: 15px; text-shadow: 1px 1px 0 #000; }
+  .g-panel { position: absolute; left: 12px; right: 12px; top: 60px; max-height: 72%; overflow-y: auto; background: var(--panel);
+    border: 4px solid var(--panel-dark); border-radius: 8px; padding: 14px; color: var(--ink); }
+  .g-panel[hidden] { display: none; }
+  .g-panel h3 { margin: 0 0 8px; }
+  .g-panel .chip.on { border-color: var(--ink); background: #ffe9a8; }
+  .g-panel .chip svg { width: 20px; height: 20px; vertical-align: -4px; margin-right: 3px; }
+  .g-panel .row2 { display: flex; gap: 8px; margin-top: 10px; }
+  .g-panel .row2 .btn { font-size: 18px; padding: 12px; }
+  .joy { position: absolute; left: 18px; bottom: 112px; width: 130px; height: 130px; border-radius: 50%;
+    background: rgba(255,255,255,.22); border: 3px solid rgba(255,255,255,.55); touch-action: none; }
+  .knob { position: absolute; left: 40px; top: 40px; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,.75); }
+  .g-jump { position: absolute; right: 18px; bottom: 120px; width: 86px; height: 86px; border-radius: 50%; border: 3px solid rgba(255,255,255,.7);
+    background: rgba(255,255,255,.3); color: #fff; font-size: 18px; text-shadow: 1px 1px 0 #000; touch-action: none; }
+  .g-hint { position: absolute; top: 56px; left: 0; right: 0; text-align: center; color: #fff; font-size: 15px; text-shadow: 1px 1px 0 #000; pointer-events: none; }
+  .g-hotbar { position: absolute; left: 0; right: 0; bottom: 10px; display: flex; gap: 5px; overflow-x: auto; padding: 6px 8px;
+    background: rgba(40,40,40,.85); border-top: 3px solid #2a2a2a; }
+  .hb { flex: none; width: 58px; border: 3px solid; border-color: #9a9a9a #3a3a3a #3a3a3a #9a9a9a; background: #8b8b8b; padding: 3px 0 2px;
+    color: #fff; font-size: 12px; text-align: center; position: relative; }
+  .hb svg { width: 34px; height: 34px; display: block; margin: 0 auto; }
+  .hb .c { position: absolute; right: 3px; top: 24px; font-size: 15px; text-shadow: 1px 1px 0 #000; }
+  .hb.on { border-color: #fff; background: #a7a7a7; box-shadow: 0 0 0 2px #fff; }
+  .hb.zero { opacity: .4; }
+  .toast { position: fixed; left: 50%; top: 96px; transform: translateX(-50%); background: rgba(0,0,0,.8); color: #fff;
+    padding: 10px 16px; border-radius: 10px; font-size: 17px; z-index: 60; display: none; max-width: 90%; text-align: center; }
+   
+  .lv { display: flex; align-items: center; gap: 12px; }
+  .lv .badge { flex: none; width: 58px; height: 58px; border-radius: 50%; background: linear-gradient(#ffe27a, #f2a930); border: 3px solid #c98a12;
+    display: flex; align-items: center; justify-content: center; font-size: 15px; color: #6b4210; font-weight: bold; }
+  .meter { height: 18px; background: #fff; border: 3px solid var(--panel-dark); border-radius: 999px; overflow: hidden; margin-top: 6px; }
+  .meter i { display: block; height: 100%; background: repeating-linear-gradient(45deg, var(--grass) 0 10px, #84d356 10px 20px); }
+  .meter.rainbow i { background: linear-gradient(90deg, #d23b2b, #f28c28, #f2c230, #7cb342, #2f7fd8, #8e5ad6); }
+  .goal-pick .btn { margin-top: 8px; font-size: 19px; padding: 12px; }
+
+   
+  .gift { background: #fff0f6; border-color: #f5a3c7; }
+  .gift.ready { background: #ffe3ef; animation: glow 1.4s ease-in-out infinite; }
+  @keyframes glow { 50% { box-shadow: 0 0 0 6px rgba(245,163,199,.6); } }
+  .bar { height: 22px; background: #fff; border: 3px solid #f5a3c7; border-radius: 999px; overflow: hidden; margin-top: 8px; }
+  .bar i { display: block; height: 100%; background: repeating-linear-gradient(45deg, #ff7fb0 0 10px, #ff9cc3 10px 20px); }
+  .album { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sticker { background: #fff; border: 3px dashed #f5a3c7; border-radius: 12px; padding: 8px 12px; text-align: center; font-size: 15px; }
+  .sticker b { display: block; font-size: 18px; }
+
+   
+  .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 280px; margin: 10px auto; }
+  .keypad button { padding: 14px 0; font-size: 24px; border: none; border-radius: 8px; background: #fff; box-shadow: 0 3px 0 var(--panel-dark); }
+  .dots { text-align: center; font-size: 30px; letter-spacing: 8px; min-height: 40px; }
+  .pending img { width: 100%; border: 2px solid var(--panel-dark); border-radius: 6px; margin-top: 8px; background: #fff; }
+  .row2 { display: flex; gap: 8px; } .row2 .btn { font-size: 18px; padding: 12px 6px; }
+  .spinner { width: 46px; height: 46px; margin: 40px auto; border: 6px solid var(--panel-dark); border-top-color: var(--grass); border-radius: 50%; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<header>
+  <div class="top"><h1 class="pix">독서 블록 탐험</h1><button class="lock" onclick="openParent()">🔒 부모님</button></div>
+  <div class="hello"><span id="hello"></span><span class="fire" id="fire"></span></div>
+  <div class="ground"></div>
+</header>
+
+<main>
+  
+  <section class="screen on" id="s-home">
+    <div id="home-chest"></div>
+    <div class="card" id="home-today"></div>
+    <div id="home-level"></div>
+    <div id="home-goal"></div>
+    <div id="home-gift"></div>
+    <div id="home-comment"></div>
+    <div class="card">
+      <h2>🏘️ 내 마을</h2>
+      <div id="home-village"></div>
+      <button class="btn brown" onclick="go('village')">마을 짓기 🧱</button>
+    </div>
+    <div class="card">
+      <h2>지금 내 곡괭이</h2>
+      <div id="home-pick"></div>
+    </div>
+  </section>
+
+  
+  <section class="screen" id="s-write">
+    <div class="card">
+      <h2>📅 <span id="w-date"></span> 독후감</h2>
+      <label class="q">📖 오늘 읽은 책 제목은?</label>
+      <input class="field" id="w-title" placeholder="예) 구름빵" autocomplete="off">
+      <div class="chips" id="w-recent"></div>
+    </div>
+    <div class="card">
+      <label class="q">😊 책을 읽고 기분이 어땠나요?</label>
+      <div class="moods" id="w-moods"></div>
+    </div>
+    <div class="card">
+      <label class="q">⭐ 이 책에 별을 몇 개 줄까요?</label>
+      <div class="stars" id="w-stars"></div>
+    </div>
+    <div class="card">
+      <label class="q">🎨 가장 기억에 남는 장면을 그려 봐요 <span class="muted">(그리면 재료 +1)</span></label>
+      <div class="pad"><canvas id="pad"></canvas></div>
+      <div class="tools" id="w-colors">
+        <button class="small" onclick="clearPad()">다 지우기</button>
+      </div>
+    </div>
+    <div class="card">
+      <label class="q">🦸 이 책의 주인공은 누구인가요? <span class="muted">(쓰면 마을에 이사 와요!)</span></label>
+      <input class="field" id="w-hero" placeholder="예) 홍비와 홍시" autocomplete="off" maxlength="20" style="margin-bottom:14px">
+      <label class="q">✏️ 가장 기억에 남는 장면은 무엇인가요?</label>
+      <textarea class="field" id="w-scene" placeholder="예) 동생이 구름빵을 먹고 하늘을 날았어요."></textarea>
+      <label class="q" style="margin-top:14px">💭 내가 주인공이라면 어떻게 했을까요? <span class="muted">(안 써도 돼요)</span></label>
+      <textarea class="field" id="w-think" placeholder="예) 나라면 아빠에게 구름빵을 갖다 드렸을 거예요."></textarea>
+      <div class="count" id="w-count"></div>
+    </div>
+    <div class="err" id="w-err"></div>
+    <button class="btn" onclick="submitReport()">다 썼어요! 보내기 📮</button>
+    <button class="btn gray" onclick="go('home')">나중에 쓸래요</button>
+  </section>
+
+  
+  <section class="screen" id="s-bag">
+    <div class="card"><h2>🎒 내 가방</h2><div class="grid" id="bag"></div><p class="muted" id="bag-empty"></p></div>
+    <div class="card"><h2>재료가 나오는 확률</h2><div id="odds" class="muted"></div></div>
+  </section>
+
+  
+  <section class="screen" id="s-craft">
+    <div id="recipes"></div>
+  </section>
+
+  
+  <section class="screen" id="s-village">
+    <div class="card" style="text-align:center">
+      <h2>🏘️ <span id="v-name"></span>의 마을</h2>
+      <div id="v-map"></div>
+      <p class="muted" id="v-count"></p>
+      <button class="btn" onclick="enterGame()">마을로 들어가기 🚪</button>
+      <button class="btn brown" style="margin-top:10px" onclick="enterMaze()">미로 탐험 🗺️</button>
+      <p class="muted" id="v-maze"></p>
+    </div>
+    <div class="card">
+      <h2>🎮 이렇게 놀아요</h2>
+      <p>🕹️ 왼쪽 동그라미를 밀면 걸어요<br>👆 화면을 끌면 둘러봐요<br>⬆️ 「점프」로 블록 위에 올라가요<br>
+        ⛏ 를 고르고 블록을 톡 누르면 부서져요<br>🧱 블록을 고르고 블록이나 땅을 톡 누르면 그 옆에 놓여요<br>🚪 문을 톡 누르면 열리고 닫혀요(닫힌 문은 못 지나가요)<br>
+        🖼️ 내 그림 액자를 벽 옆면에 톡 누르면 벽에 걸려요<br>🧑 책 주인공 주민을 톡 누르면 말을 걸어요</p>
+    </div>
+  </section>
+
+  
+  <section class="screen" id="s-books">
+    <div class="card"><h2>📚 내가 읽은 책</h2><div id="books"></div></div>
+    <div class="card gift"><h2>🎁 내 <span class="gname"></span> 모음</h2><div class="album" id="album"></div></div>
+  </section>
+
+  
+  <section class="screen" id="s-open">
+    <div class="card chest-card"><h2 id="open-title">보물 상자를 열었어요!</h2><div class="reveal" id="reveal"></div>
+      <p class="muted">가방에 넣었어요.</p>
+      <button class="btn" id="open-next" onclick="openChest()">다음 상자 열기</button>
+      <button class="btn brown" onclick="go('craft')">만들러 가기 🔨</button>
+      <button class="btn brown" onclick="go('village')">마을 짓기 🧱</button>
+      <button class="btn gray" onclick="go('home')">처음으로</button>
+    </div>
+  </section>
+
+  
+  <section class="screen" id="s-msg"><div class="card" style="text-align:center"><div id="msg"></div>
+    <button class="btn" onclick="go('home')">좋아요!</button></div></section>
+  <section class="screen" id="s-wait"><div class="spinner"></div></section>
+
+  
+  <section class="screen" id="s-parent">
+    <div class="card" id="p-login">
+      <h2>🔒 부모님 확인</h2>
+      <p class="muted">비밀번호 4자리를 눌러 주세요.</p>
+      <div class="dots" id="p-dots"></div>
+      <div class="keypad" id="p-keys"></div>
+      <div class="err" id="p-err"></div>
+    </div>
+    <div id="p-list"></div>
+    <button class="btn gray" onclick="leaveParent()">아이 화면으로</button>
+  </section>
+</main>
+
+<div class="game" id="game" hidden>
+  <canvas id="gcv"></canvas>
+  <div class="g-top"><button onclick="exitGame()">◀ 나가기</button><button id="g-mazebtn" onclick="openMazeBuilder()">미로 짓기</button><span class="g-save" id="g-save"></span></div>
+  <div class="g-panel" id="g-panel" hidden></div>
+  <div class="g-hint" id="g-hint">블록을 톡 누르면 ⛏ 부수기 / 🧱 놓기</div>
+  <div class="joy" id="joy"><div class="knob" id="knob"></div></div>
+  <button class="g-jump" id="g-jump">점프</button>
+  <div class="g-hotbar" id="g-hotbar"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<nav>
+  <button id="n-home" class="on" onclick="go('home')"></button>
+  <button id="n-bag" onclick="go('bag')"></button>
+  <button id="n-craft" onclick="go('craft')"></button>
+  <button id="n-village" onclick="go('village')"></button>
+  <button id="n-books" onclick="go('books')"></button>
+</nav>
+
+<script>
+  
+  var PAL = { b: '#8b5a2b', B: '#6b4220', l: '#b07a45', g: '#8a8a8a', G: '#666', h: '#b5b5b5', s: '#dcdcdc',
+    u: '#2f7fd8', v: '#8e5ad6', y: '#f2c230', Y: '#c99a1a', o: '#f28c28', w: '#fff4b0', c: '#5ee0e6', C: '#2aa8b8', W: '#e8ffff', r: '#d23b2b', m: '#7cb342', M: '#5a9a2c', k: '#3a2a1a' };
+  var PIX = {
+    '나무': ['BbBbbBbB', 'BbBbbBbB', 'BblbbBlB', 'BbBbbBbB', 'BbBblBbB', 'BbBbbBbB', 'BlBbbBbB', 'BbBbbBbB'],
+    '판자': ['llllllll', 'lllllllb', 'BBBBBBBB', 'llllbbll', 'llllllll', 'BBBBBBBB', 'llbbllll', 'llllllll'],
+    '돌벽돌': ['hhhhhhhG', 'gggggggG', 'GGGGGGGG', 'hhhGhhhh', 'gggGgggg', 'GGGGGGGG', 'hhhhhhhG', 'gggggggG'],
+    '유리': ['WWWWWWWW', 'W.....cW', 'W....c.W', 'W...c..W', 'W......W', 'W.c....W', 'Wc.....W', 'WWWWWWWW'],
+    '문': ['BllllllB', 'BllllllB', 'BlWWWWlB', 'BlWWWWlB', 'BllllllB', 'BlllllyB', 'BllllllB', 'BllllllB'],
+    '큰문': ['BBBBBBBB', 'BllllllB', 'BlWWWWlB', 'BlWWWWlB', 'BlWWWWlB', 'BllllllB', 'BBBBBBBB', 'BllllllB',
+      'BlbbbblB', 'BlbbbbyB', 'BlbbbbyB', 'BlbbbblB', 'BllllllB', 'BlbbbblB', 'BllllllB', 'BBBBBBBB'],
+    '횃불': ['........', '...yy...', '...oy...', '...lb...', '...lb...', '...lb...', '...lb...', '........'],
+    '잔디': ['mmmmmmmm', 'mmMmmmMm', 'bMbbMbbb', 'bbbbbbbb', 'bBbbbbBb', 'bbbbbbbb', 'bbbBbbbb', 'bbbbbbbb'],
+    '흙': ['bbbbbbbb', 'bBbbbbBb', 'bbbbbbbb', 'bbbBbbbb', 'bbbbbbbb', 'Bbbbbbbb', 'bbbbbBbb', 'bbbbbbbb'],
+    '반짝 블록': ['ywywywyw', 'wyyoyyww', 'yoywyyoy', 'wyyyywyy', 'yywyoyyw', 'wyoyywyy', 'yyywyyoy', 'wywyywyw'],
+    '무지개 블록': ['rrrrrrrr', 'oooooooo', 'yyyyyyyy', 'mmmmmmmm', 'cccccccc', 'uuuuuuuu', 'vvvvvvvv', 'rrrrrrrr'],
+    '액자': ['BBBBBBBB', 'BccccccB', 'BcyccccB', 'BccccccB', 'BcmmcccB', 'BmmmmmmB', 'BmmmmmmB', 'BBBBBBBB'],
+    '주민': ['..kkkk..', '..ssss..', '..sksk..', '..ssss..', '.uuuuuu.', '.uuuuuu.', '..BB.BB.', '..BB.BB.'],
+    '풀': ['mmmmmmmm', 'mMmmmMmm', 'mmmmMmmm', 'MmmmmmMm', 'mmMmmmmm', 'mmmmmMmm', 'mMmmmmmm', 'mmmmMmmM'],
+    '철블록': ['GGGGGGGG', 'GssssssG', 'GshhhhsG', 'GshsshsG', 'GshsshsG', 'GshhhhsG', 'GssssssG', 'GGGGGGGG'],
+    '금블록': ['YYYYYYYY', 'YwwwwwyY', 'YwyyyyyY', 'YyywyyyY', 'YyyyyyyY', 'YyyyywyY', 'YyyyyyyY', 'YYYYYYYY'],
+    '다이아블록': ['CCCCCCCC', 'CWWcccCC', 'CWcccccC', 'CcccWccC', 'CccWcccC', 'CcccccWC', 'CCcccWWC', 'CCCCCCCC'],
+    '부수기': ['.XXXXXX.', 'X..lb..X', '...lb...', '...lb...', '...lb...', '...lb...', '...lb...', '...lb...'],
+    '돌': ['gggGgggh', 'ghgggGgg', 'gggggghg', 'Ggghgggg', 'gggggGgg', 'ghGggggh', 'gggghggg', 'Gggggggg'],
+    '철': ['........', '........', '..hhhh..', '.hsssshG', 'hssssssG', 'GGGGGGGG', '........', '........'],
+    '금': ['........', '........', '..wwww..', '.wyyyywY', 'wyyyyyyY', 'YYYYYYYY', '........', '........'],
+    '다이아몬드': ['........', '..WWcc..', '.WcccCC.', 'cccccCCC', '.ccccCC.', '..ccCC..', '...cC...', '........'],
+    '막대기': ['.......l', '......lb', '.....lb.', '....lb..', '...lb...', '..lb....', '.lb.....', 'lb......'],
+    '곡괭이': ['.XXXXXX.', 'X..lb..X', '...lb...', '...lb...', '...lb...', '...lb...', '...lb...', '...lb...'],
+    '칼': ['...XX...', '...XX...', '...XX...', '...XX...', '...XX...', '.BBBBBB.', '...lb...', '...lb...'],
+    '황금 사과': ['....B...', '...Bm...', '.yyyyyy.', 'yywyyyyY', 'yyyyyyyY', 'yyyyyyYY', '.yyyyYY.', '..yYYY..'],
+    '성': ['G.G..G.G', 'GGG..GGG', 'GgG..GgG', 'GgGGGGgG', 'GggggggG', 'GggkkggG', 'GggkkggG', 'GGGkkGGG'],
+    '모닥불': ['...y....', '..yoy...', '..oyo...', '.orrro..', '.orrro..', 'lbbBbbl.', '.BbbbB..', 'g.g.g.g.'],
+    '밭': ['ymymymym', 'bbbbbbbb', 'mmmmmmmm', 'bbbbbbbb', 'ymymymym', 'bbbbbbbb', 'mmmmmmmm', 'bbbbbbbb'],
+    '우물': ['BBBBBBBB', '.B....B.', '.B....B.', 'gggggggg', 'gCCCCCCg', 'gCccccCg', 'gCCCCCCg', 'gggggggg'],
+    '다리': ['........', 'bbbbbbbb', 'b.b..b.b', 'bbbbbbbb', 'B......B', 'cB....Bc', 'ccB..Bcc', 'cccccccc'],
+    '도서관': ['...rr...', '.rrrrrr.', 'rrrrrrrr', 'bbbbbbbb', 'brycrycb', 'bbbbbbbb', 'brycBBcb', 'bbbBBbbb'],
+    '대장간': ['..GGGG..', '.GggggG.', 'GggggggG', 'GoorgggG', 'GoorkkkG', 'GgggkkgG', 'GggggggG', 'GGGGGGGG'],
+    '경비탑': ['G.G..G.G', 'GGGGGGGG', '.GggggG.', '.GgkkgG.', '.GggggG.', '.GgkkgG.', '.GggggG.', '.GGGGGG.'],
+    '분수': ['...W....', '..WcW...', '...c....', '.gcccg..', 'gCcccCg.', 'gggggggg', '.gGGGg..', '........'],
+    '선물': ['.r..r...', '..rr....', 'yyyrryyy', 'yyyrryyy', 'rrrrrrrr', 'yyyrryyy', 'yyyrryyy', 'yyyrryyy'],
+    '상자': ['BBBBBBBB', 'BbbbbbbB', 'BbbbbbbB', 'BBBhhBBB', 'BbbhhbbB', 'BbbbbbbB', 'BbbbbbbB', 'BBBBBBBB'],
+    '책': ['.rrrrrr.', '.rwwwwr.', '.rrrrrr.', '.rrrrrr.', '.rrrrrr.', '.rrrrrr.', '.rssssr.', '.rrrrrr.'],
+    '가방': ['..BBBB..', '.B....B.', 'bbbbbbbb', 'bllllllb', 'bllyyllb', 'bllllllb', 'bllllllb', 'bbbbbbbb'],
+    '작업대': ['BBBBBBBB', 'bgbbbgbb', 'BBBBBBBB', 'b.b..b.b', 'b.b..b.b', 'b.b..b.b', 'b.b..b.b', 'b.b..b.b'],
+    '집': ['...rr...', '..rrrr..', '.rrrrrr.', 'rrrrrrrr', '.ssssss.', '.scsBss.', '.sssBss.', '.sssBss.']
+  };
+  var MAT_COLOR = { '나무': 'b', '돌': 'g', '철': 's', '금': 'y', '다이아몬드': 'c' };
+   
+  function itemName(k) { return String(k).indexOf('액자:') === 0 ? '내 그림 액자' : k; }
+  function icon(name) {
+    if (String(name).indexOf('액자:') === 0) name = '액자';
+    var rows = PIX[name], over = {};
+    if (!rows) {
+      var m = name.match(/^(나무|돌|철|금|다이아몬드) (곡괭이|칼)$/);
+      if (m) { rows = PIX[m[2]]; over.X = PAL[MAT_COLOR[m[1]]]; }
+    }
+    rows = rows || PIX['상자'];
+    var out = '<svg viewBox="0 0 8 8" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">';
+    rows.forEach(function (row, y) {
+      row.split('').forEach(function (ch, x) {
+        var col = over[ch] || PAL[ch];
+        if (col) out += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="' + col + '"/>';
+      });
+    });
+    return out + '</svg>';
+  }
+
+  
+  var S = <?!= initial ?>;   // 서버가 페이지에 미리 넣어 준 첫 상태(없으면 null → getState 로 받음)
+  var SEQ = 0;            // 상태가 바뀔 때마다 +1 — 늦게 온 백그라운드 응답이 새 상태를 덮지 않게
+  var FRESH = !!S && !S.cached;   // 방금 서버에서 받은 상태면 다음 탭 이동 때 다시 받지 않음(캐시로 그린 첫 화면은 뒤에서 새로 받음)
+  var STALE = false;      // 버튼 응답에 상태가 없었으면 다음 탭 이동 때 기다려서 다시 받음
+  var W = { mood: '', stars: 0 };
+  var PARENT_PIN = '';
+  var MOOD_FACE = { '재미있어요': '😄', '신나요': '🤩', '슬퍼요': '😢', '무서워요': '😱', '궁금해요': '🤔' };
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function call(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return new Promise(function (ok, fail) { var r = google.script.run.withSuccessHandler(ok).withFailureHandler(fail); r[fn].apply(r, args); });
+  }
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(function (s) { s.classList.remove('on'); });
+    document.getElementById(id).classList.add('on');
+    window.scrollTo(0, 0);
+  }
+  function oops(e) { message('😥', '앗, 잠깐 문제가 생겼어요.<br><span class="muted">' + esc(e && e.message ? e.message : e) + '</span>'); }
+  function message(face, html) { document.getElementById('msg').innerHTML = '<div style="font-size:56px">' + face + '</div><p style="font-size:21px;line-height:1.6">' + html + '</p>'; show('s-msg'); }
+  function name() { return S ? S.child : ''; }
+
+  /** 서버에서 받은 새 상태로 바꾼다(없으면 다음 탭 이동 때 다시 받는다) */
+  function useState(s) {
+    if (!s) { STALE = true; return; }
+    S = s; SEQ++; FRESH = true; STALE = false;
+  }
+  function draw(tab) { renderTop(); ({ home: renderHome, bag: renderBag, craft: renderCraft, village: renderVillage, books: renderBooks })[tab](); show('s-' + tab); }
+  function go(tab) {
+    ['home', 'bag', 'craft', 'village', 'books'].forEach(function (t) { document.getElementById('n-' + t).classList.toggle('on', t === tab); });
+    var fresh = FRESH; FRESH = false;
+    if (!S || STALE) {   // 상태가 없으면 예전처럼 기다려서 받는다
+      show('s-wait');
+      return call('getState').then(function (s) { useState(s); FRESH = false; draw(tab); }).catch(oops);
+    }
+    draw(tab);           // 가진 상태로 바로 그린다
+    if (tab === 'home' && !fresh) refresh();   // 홈만: 뒤에서 조용히 새 상태를 받는다
+  }
+  /** 뒤에서 조용히 새 상태를 받아, 지금 탭 화면(홈·가방·만들기·마을·책장)을 보고 있으면 다시 그린다 */
+  function refresh() {
+    var seq = SEQ;
+    call('getState').then(function (s) {
+      if (!s || seq !== SEQ || busy()) return;   // 그 사이 상태가 바뀌었거나 버튼 저장 중이면 버린다
+      useState(s); FRESH = false;
+      redrawTab();
+    }).catch(function () {});
+  }
+  /** 지금 보이는 탭 화면만 다시 그린다(게임·글쓰기·부모님·상자 열기·메시지 화면이면 그대로 · 스크롤 유지) */
+  function redrawTab() {
+    if (!document.getElementById('game').hidden) return;
+    var tab = ['home', 'bag', 'craft', 'village', 'books'].filter(function (t) { return document.getElementById('s-' + t).classList.contains('on'); })[0];
+    if (!tab) return;
+    renderTop(); ({ home: renderHome, bag: renderBag, craft: renderCraft, village: renderVillage, books: renderBooks })[tab]();
+  }
+
+  // ===== 버튼 저장 줄: 서버 호출을 하나씩 순서대로(연타·연속 상자 열기 · 마을 저장도 같은 줄) =====
+  var JOBS = [], RUNNING = false;
+  function serial(fn, args) {
+    return new Promise(function (ok, fail) { JOBS.push({ fn: fn, args: args || [], ok: ok, fail: fail }); nextJob(); });
+  }
+  function nextJob() {
+    if (RUNNING || !JOBS.length) return;
+    var j = JOBS.shift();
+    RUNNING = true;
+    // 응답 처리(settle·undo)가 먼저 돌고 다음 호출을 보낸다 — 실패하면 남은 호출을 취소할 수 있게
+    call.apply(null, [j.fn].concat(j.args)).then(function (r) { RUNNING = false; j.ok(r); Promise.resolve().then(nextJob); },
+      function (e) { RUNNING = false; j.fail(e); Promise.resolve().then(nextJob); });
+  }
+  function busy() { return RUNNING || JOBS.length > 0; }
+
+  /** 버튼 서버 응답: 줄에 남은 호출이 없을 때만 서버 상태로 맞춘다(중간 응답이 미리 계산한 화면을 되돌리지 않게) */
+  function settle(r) {
+    if (!r || r.dropped) return;
+    if (!r.ok) { undo(r.state); return; }
+    if (busy()) return;
+    var before = JSON.stringify(S);
+    useState(r.state);
+    if (JSON.stringify(S) !== before) redrawTab();
+  }
+  /** 저장 실패: 알리고, 남은 버튼 호출은 취소하고, 서버 상태(없으면 새로 받아서)로 되돌려 다시 그린다 */
+  function undo(state) {
+    toast('저장하지 못했어요. 다시 해 볼까요?');
+    JOBS = JOBS.filter(function (j) { if (j.fn === 'saveWorld') return true; j.ok({ dropped: true }); return false; });
+    function back(s) {
+      useState(s);   // 못 받았으면 다음 탭 이동 때 기다려서 받는다
+      if (document.getElementById('s-open').classList.contains('on') || document.getElementById('s-msg').classList.contains('on')) go('home');
+      else redrawTab();
+    }
+    if (state) back(state); else call('getState').then(back, function () { back(null); });
+  }
+
+  // ===== 버튼 결과 미리 계산(서버 Code.gs 의 같은 이름 함수와 같은 규칙) =====
+  function canPredict() { return !!(S && S.rules && S.closed && S.recipes && S.bag && !STALE); }
+  function bestPickaxe(bag) {
+    var p = S.rules.pickaxes;
+    for (var i = 0; i < p.length; i++) if ((bag[p[i]] || 0) > 0) return p[i];
+    return '없음';
+  }
+  function pickTier(bag) {
+    var t = 0, pt = S.rules.pickTier;
+    Object.keys(pt).forEach(function (p) { if ((bag[p] || 0) > 0 && pt[p] > t) t = pt[p]; });
+    return t;
+  }
+  function canCraft(bag, r) { return Object.keys(r.needs).every(function (k) { return (bag[k] || 0) >= r.needs[k]; }); }
+  /** 목표 진행(서버 goalInfo 와 같음 · 곡괭이는 마을에 못 놓으니 모은 수 = 가방 수) */
+  function goalInfo(id) {
+    var g = S.rules.goals.filter(function (x) { return x.id === id; })[0];
+    if (!g) return null;
+    if (g.blocks) {
+      var placed = S.world.length;
+      return { id: g.id, name: g.name, pct: Math.min(100, Math.round(placed / g.blocks * 100)), done: placed >= g.blocks,
+        need: placed >= g.blocks ? '' : '블록 ' + (g.blocks - placed) + '개 더 놓기' };
+    }
+    var recipe = S.recipes.filter(function (x) { return x.id === g.recipe; })[0];
+    if ((S.bag[recipe.name] || 0) > 0) return { id: g.id, name: g.name, pct: 100, done: true, need: '' };
+    var sum = 0, got = 0, more = [];
+    Object.keys(recipe.needs).forEach(function (k) {
+      var n = recipe.needs[k], h = Math.min(S.bag[k] || 0, n);
+      sum += n; got += h;
+      if (h < n) more.push(k + ' ' + (n - h) + '개');
+    });
+    return { id: g.id, name: g.name, pct: Math.round(got / sum * 100), done: false, need: more.length ? more.join(', ') + ' 더 모으기' : '「만들기」에서 만들 수 있어요!' };
+  }
+  function addBag(k, n) { var v = (S.bag[k] || 0) + n; if (v > 0) S.bag[k] = v; else delete S.bag[k]; }
+  /** 가방을 바꾸고(change) 따라 바뀌는 값(곡괭이·단계·만들 수 있나·상자 수·목표)을 다시 계산한다 */
+  function predict(change) {
+    S.starter = null;
+    change();
+    S.pickaxe = bestPickaxe(S.bag);
+    S.tier = pickTier(S.bag);
+    S.recipes.forEach(function (r) { r.can = canCraft(S.bag, r); });
+    S.chests = S.closed.length;
+    S.goal = S.goal ? goalInfo(S.goal.id) : null;
+    SEQ++; FRESH = true;
+  }
+  function renderTop() {
+    document.getElementById('hello').textContent = S.child + ', 안녕!';
+    document.getElementById('fire').textContent = S.streak ? '🔥 ' + S.streak + '일 연속' + (S.shield ? '' : ' 🛡️') : '오늘부터 시작!';
+  }
+
+  
+  function renderHome() {
+    var st = S.starter ? '<div class="card chest-card">' + icon('선물') + '<h2>🎁 시작 선물을 받았어요!</h2><div class="reveal">' +
+      Object.keys(S.starter).map(function (k, i) { return '<div class="it" style="animation-delay:' + (i * 0.12) + 's">' + icon(k) + '<div>' + esc(k) + ' ×' + S.starter[k] + '</div></div>'; }).join('') +
+      '</div><p>이걸로 「마을」에 들어가 무엇이든 지어 봐요. 더 많이 지으려면 독후감을 쓰고 보물 상자를 모아요!</p><button class="btn" onclick="go(\'village\')">마을 가기 🚪</button></div>' : '';
+    S.starter = null;   
+    document.getElementById('home-chest').innerHTML = st + (S.chests ? '<div class="card chest-card">' + icon('상자') +
+      '<h2>보물 상자가 ' + S.chests + '개 왔어요!</h2><button class="btn" onclick="openChest()">눌러서 열기 ✨</button></div>' : '');
+    var t = S.todayStatus, box = document.getElementById('home-today');
+    if (!t) box.innerHTML = '<h2>오늘의 독후감</h2><p class="muted">책을 읽고 독후감을 쓰면 엄마·아빠가 확인한 뒤 보물 상자가 와요.</p>' +
+      '<button class="btn" onclick="startWrite()">📖 독후감 쓰기</button>';
+    else if (t === '확인 기다리는 중') box.innerHTML = '<h2>⏳ 확인 기다리는 중</h2><p>오늘 독후감을 보냈어요! 엄마·아빠가 확인하면 보물 상자가 와요.</p>';
+    else if (t === '다시 써 볼까요') box.innerHTML = '<h2>✏️ 조금만 더 써 볼까요?</h2>' +
+      (S.redoComment ? '<div class="bubble">' + esc(S.redoComment) + '</div>' : '') + '<button class="btn brown" onclick="startWrite()">다시 쓰기</button>';
+    else box.innerHTML = '<h2>🎉 오늘 독후감 끝!</h2><p>' + esc(t) + ' 도장을 받았어요. 내일 또 만나요!</p>';
+    document.getElementById('home-comment').innerHTML = S.lastComment ? '<div class="card"><h2>💌 엄마·아빠 한마디</h2><p class="muted">' +
+      esc(S.lastComment.date) + ' 「' + esc(S.lastComment.title) + '」</p><div class="bubble">' + esc(S.lastComment.text) + '</div></div>' : '';
+    var L = S.level, wk = S.weekly;
+    document.getElementById('home-level').innerHTML = '<div class="card"><div class="lv"><div class="badge">Lv.' + L.level + '</div><div style="flex:1">' +
+      '<h2 style="margin:0">🏅 ' + esc(L.title) + '</h2>' +
+      (L.next ? '<div class="meter"><i style="width:' + Math.round((L.count - L.from) / Math.max(1, L.to - L.from) * 100) + '%"></i></div>' +
+        '<div class="muted">「' + esc(L.next) + '」까지 독후감 ' + L.toNext + '번</div>' : '<div class="muted">가장 높은 칭호예요! 대단해요!</div>') +
+      '</div></div>' +
+      '<p style="margin:12px 0 0">🌈 <b>이번 주 도전</b> ' + wk.done + ' / ' + wk.goal + (wk.got ? ' — 무지개 블록 받았어요!' : ' — ' + wk.goal + '번이면 무지개 블록!') + '</p>' +
+      '<div class="meter rainbow"><i style="width:' + Math.round(wk.done / wk.goal * 100) + '%"></i></div>' +
+      '<p class="muted" style="margin:10px 0 0">🛡️ 연속 기록 보호권: ' + (S.shield ? '이번 주에 썼어요' : '남아 있어요 (하루 빠져도 괜찮아요)') + '</p></div>';
+    var gl = S.goal;
+    document.getElementById('home-goal').innerHTML = '<div class="card"><h2>🎯 내 목표</h2>' + (gl
+      ? '<b>' + esc(gl.name) + '</b>' + (gl.done ? ' 🎉 해냈어요!' : '') + '<div class="meter"><i style="width:' + gl.pct + '%"></i></div>' +
+        (gl.need ? '<div class="muted">' + esc(gl.need) + '</div>' : '') +
+        '<button class="btn gray" style="font-size:17px;padding:10px" onclick="pickGoal()">' + (gl.done ? '새 목표 고르기' : '목표 바꾸기') + '</button>'
+      : '<p class="muted">무엇을 만들고 싶나요? 목표를 고르면 얼마나 남았는지 보여 줘요.</p><button class="btn brown" onclick="pickGoal()">목표 고르기</button>') + '</div>';
+    var g = S.gift;
+    document.getElementById('home-gift').innerHTML = g.waiting
+      ? '<div class="card gift ready"><h2>' + icon('선물') + ' ' + esc(g.name) + ' 받을 차례예요! 🎉</h2><p>독후감 ' + g.approved +
+        '개를 해냈어요! 엄마·아빠에게 말해요.</p></div>'
+      : '<div class="card gift"><h2>🎁 ' + esc(g.name) + '까지 ' + g.toNext + '개 남았어요</h2><div class="bar"><i style="width:' +
+        Math.round(g.progress / g.every * 100) + '%"></i></div><p class="muted">확인받은 독후감 ' + g.progress + ' / ' + g.every + '</p></div>';
+    var placed = Object.keys(S.placed).reduce(function (a, k) { return a + S.placed[k]; }, 0);
+    document.getElementById('home-village').innerHTML = placed
+      ? '<p>블록 ' + placed + '개로 만든 마을(위에서 본 모습)</p>' + miniMap(S.world, S.size, 14)
+      : '<p class="muted">아직 빈 땅이에요. 「만들기」에서 판자를 만들어 첫 집을 지어 볼까요?</p>';
+    var p = S.pickaxe;
+    document.getElementById('home-pick').innerHTML = p === '없음'
+      ? '<p>아직 곡괭이가 없어요. 나무를 모아 <b>나무 곡괭이</b>를 만들면 철이 더 잘 나와요!</p>'
+      : '<div class="recipe">' + icon(p) + '<div class="body"><b>' + esc(p) + '</b><div class="muted">더 좋은 곡괭이를 만들면 귀한 재료가 더 잘 나와요.</div></div></div>';
+  }
+
+  
+  function pickGoal() {
+    document.getElementById('msg').innerHTML = '<div style="font-size:48px">🎯</div><p style="font-size:21px">무엇을 목표로 할까요?</p><div class="goal-pick">' +
+      S.goals.map(function (g) { return '<button class="btn brown" onclick="setGoal(\'' + g.id + '\')">' + esc(g.name) + '</button>'; }).join('') + '</div>';
+    show('s-msg');
+  }
+  function setGoal(id) {
+    if (!canPredict() || !S.goals.some(function (g) { return g.id === id; })) {   // 미리 알 수 없으면 예전처럼 기다린다
+      show('s-wait');
+      serial('setGoal', [id]).then(function (r) { if (!busy()) useState(r.state); go('home'); }).catch(oops);
+      return;
+    }
+    predict(function () { S.goal = goalInfo(id); });
+    go('home');
+    serial('setGoal', [id]).then(settle, function () { undo(null); });
+  }
+
+  
+  function openChest() {
+    if (!canPredict() || !S.closed.length) {   // 미리 알 수 없으면 예전처럼 기다린다
+      show('s-wait');
+      serial('openChest').then(function (r) {
+        if (!busy()) useState(r.state);
+        if (!r.ok) { go('home'); return; }
+        showChest(r.items, r.left);
+      }).catch(oops);
+      return;
+    }
+    var items = S.closed[0];
+    predict(function () {
+      S.closed = S.closed.slice(1);
+      Object.keys(items).forEach(function (k) { addBag(k, items[k]); });
+    });
+    showChest(items, S.closed.length);
+    serial('openChest').then(settle, function () { undo(null); });
+  }
+  function showChest(items, left) {
+    document.getElementById('reveal').innerHTML = Object.keys(items).map(function (k, i) {
+      return '<div class="it" style="animation-delay:' + (i * 0.25) + 's">' + icon(k) + '<div>' + esc(itemName(k)) + ' ×' + items[k] + '</div></div>';
+    }).join('');
+    document.getElementById('open-next').style.display = left ? '' : 'none';
+    show('s-open');
+  }
+
+  
+  var ORDER = ['나무', '돌', '철', '금', '다이아몬드', '반짝 블록', '무지개 블록', '막대기'];
+   
+  function frameLabel(k) {
+    var f = (S.frames || []).filter(function (x) { return x.id === k; })[0];
+    return f ? '「' + f.title + '」 그림' : k;
+  }
+  function renderBag() {
+    var keys = Object.keys(S.bag).sort(function (a, b) {
+      var ia = ORDER.indexOf(a), ib = ORDER.indexOf(b);
+      return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+    });
+    document.getElementById('bag').innerHTML = keys.map(function (k) {
+      return '<div class="slot">' + icon(k) + '<span class="n">' + S.bag[k] + '</span><div class="nm">' + esc(frameLabel(k)) + '</div></div>';
+    }).join('');
+    document.getElementById('bag-empty').textContent = keys.length ? '' : '아직 비어 있어요. 독후감을 쓰고 보물 상자를 열어 봐요!';
+    document.getElementById('odds').innerHTML = '지금 곡괭이: <b>' + esc(S.pickaxe) + '</b><br>' +
+      '독후감 하나에 재료 3개 · 글 30자 넘으면 +1 · 그림 그리면 +1 · 「아주 잘했어요」 +1<br>' +
+      '3일 연속이면 금 +1 · 7일 연속이면 다이아몬드 +1';
+  }
+
+  
+  function renderCraft() {
+    document.getElementById('recipes').innerHTML = S.recipes.map(function (r) {
+      var need = Object.keys(r.needs).map(function (k) {
+        var have = S.bag[k] || 0;
+        return '<span class="' + (have < r.needs[k] ? 'short' : '') + '"><i class="ico">' + icon(k) + '</i>' + esc(k) + ' ' + have + '/' + r.needs[k] + '</span>';
+      }).join('');
+      var owned = S.bag[r.name] || 0;
+      return '<div class="card"><div class="recipe">' + icon(r.name) + '<div class="body"><b>' + esc(r.name) + (r.make > 1 ? ' ×' + r.make : '') +
+        '</b>' + (owned ? ' <span class="muted">(갖고 있어요 ' + owned + ')</span>' : '') + '<div class="need">' + need + '</div></div>' +
+        '<button class="btn' + (r.can ? '' : ' gray') + '" ' + (r.can ? '' : 'disabled') + ' onclick="craft(\'' + r.id + '\')">만들기</button></div></div>';
+    }).join('');
+  }
+  function craft(id) {
+    var rec = canPredict() && S.recipes.filter(function (x) { return x.id === id; })[0];
+    if (!rec || !rec.can) {   // 미리 알 수 없으면 예전처럼 기다린다
+      show('s-wait');
+      serial('craft', [id]).then(function (r) {
+        if (!busy()) useState(r.state);
+        if (!r.ok) { message('🤔', esc(r.message)); return; }
+        showMade(r.name, r.make);
+      }).catch(oops);
+      return;
+    }
+    predict(function () {
+      Object.keys(rec.needs).forEach(function (k) { addBag(k, -rec.needs[k]); });
+      addBag(rec.name, rec.make);
+    });
+    showMade(rec.name, rec.make);
+    serial('craft', [id]).then(settle, function () { undo(null); });
+  }
+  function showMade(nm, make) {
+    document.getElementById('msg').innerHTML = '<div class="reveal"><div class="it">' + icon(nm) + '</div></div><p style="font-size:22px">' +
+      esc(nm) + (make > 1 ? ' ' + make + '개' : '') + '를 만들었어요! 🔨</p>';
+    show('s-msg');
+  }
+
+  
+  var BLOCK_ORDER = ['판자', '나무', '돌', '돌벽돌', '유리', '문', '횃불', '반짝 블록', '무지개 블록', '철', '금', '다이아몬드'];
+  var TIER_NAME = ['맨손', '나무 곡괭이', '돌 곡괭이', '철 곡괭이'];
+  var BLOCK_COLOR = { '반짝 블록': '#ffe27a', '무지개 블록': '#c86bd6', '나무': '#7a4e25', '판자': '#c8935a', '유리': '#cfeff7', '문': '#a0662f', '횃불': '#f2c230', '돌': '#8a8a8a',
+    '돌벽돌': '#9b9b9b', '철': '#dcdcdc', '금': '#f2c230', '다이아몬드': '#5ee0e6' };
+
+   
+  function miniMap(world, size, px) {
+    var top = {};
+    world.forEach(function (c) { var k = c[0] + ',' + c[2]; if (!top[k] || top[k][1] < c[1]) top[k] = c; });
+    var html = '<div class="minimap" style="grid-template-columns:repeat(' + size.w + ',' + px + 'px)">';
+    for (var z = 0; z < size.d; z++) for (var x = 0; x < size.w; x++) {
+      var c = top[x + ',' + z];
+      html += '<i style="height:' + px + 'px;background:' + (c ? (BLOCK_COLOR[base(c[3])] || '#d6b07a') : 'transparent') + (c ? ';box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)' : '') + '"></i>';
+    }
+    return html + '</div>';
+  }
+  function renderVillage() {
+    document.getElementById('v-name').textContent = S.child;
+    document.getElementById('v-map').innerHTML = miniMap(S.world, S.size, 18);
+    var n = S.world.length;
+    document.getElementById('v-count').textContent = n ? '블록 ' + n + '개로 만든 마을이에요.' : '아직 빈 들판이에요. 들어가서 첫 블록을 놓아 볼까요?';
+    document.getElementById('v-maze').textContent = MAZE_TEXT[S.maze] || '';
+  }
+  var MAZE_TEXT = { ready: '미로 끝의 보물 상자를 찾으면 재료 1개를 받아요! (하루 한 번)',
+    noreport: '오늘 독후감을 보내면 미로 보물을 받을 수 있어요!', done: '오늘 미로 보물은 이미 받았어요. 내일 또 와요!' };
+  function toast(t) {
+    var el = document.getElementById('toast');
+    el.textContent = t; el.style.display = 'block';
+    clearTimeout(toast.t); toast.t = setTimeout(function () { el.style.display = 'none'; }, 1800);
+  }
+  function josa(w, a, b) { var c = w.charCodeAt(w.length - 1); return w + (c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 ? a : b); }
+
+  
+  var G = null;                                  
+  var EYE = 1.55, HALF = 0.3, TALL = 1.75, SPEED = 3.6, GRAVITY = 22, JUMP = 7.6, REACH = 6;
+  var PASS = { '횃불': 1 };                       // 지나갈 수 있는 블록(문은 열렸을 때만 — solid 참고)
+  function base(b) { return String(b).split('@')[0]; }
+  function isFrame(b) { return String(b).indexOf('액자:') === 0; }
+  // 큰 여닫이문: 「문」「문@x」「문@z」 + 끝에 o 면 열림(접미사 없음 = z 방향·닫힘) · 그 칸과 위 칸 2칸 높이
+  var DOOR = '문';
+  function isDoor(b) { return base(b) === DOOR; }
+  function doorOpen(b) { return /o$/.test(String(b).split('@')[1] || ''); }
+  function doorAxis(b) { return (String(b).split('@')[1] || 'z').charAt(0); }
+  /** (x,y,z) 칸을 차지한 블록(큰 문은 위 칸도 차지 — 위 칸이 비어 있고 맨 위층이 아닐 때) */
+  function cellAt(x, y, z) {
+    var m = G.blocks[key(x, y, z)];
+    if (m) return m;
+    var d = G.blocks[key(x, y - 1, z)];
+    return d && isDoor(d.userData.b) && d.userData.tall ? d : null;
+  }
+
+  var BLOCK_TEX = { '철': '철블록', '금': '금블록', '다이아몬드': '다이아블록' };   
+  function texture(name) {
+    var rows = PIX[BLOCK_TEX[name] || name], cv = document.createElement('canvas');
+    cv.width = rows[0].length * 2; cv.height = rows.length * 2;
+    var cx = cv.getContext('2d');
+    rows.forEach(function (row, y) { row.split('').forEach(function (ch, x) { if (PAL[ch]) { cx.fillStyle = PAL[ch]; cx.fillRect(x * 2, y * 2, 2, 2); } }); });
+    var t = new THREE.CanvasTexture(cv);
+    t.magFilter = THREE.NearestFilter; t.minFilter = THREE.NearestFilter;
+    return t;
+  }
+  function material(name) {
+    if (G.mats[name]) return G.mats[name];
+    if (name === '반짝 블록') return (G.mats[name] = new THREE.MeshBasicMaterial({ map: texture(name) }));   
+    var see = name === '유리' || name === '횃불' || name === '문';
+    G.mats[name] = new THREE.MeshLambertMaterial({ map: texture(name), transparent: name === '유리', opacity: name === '유리' ? 0.75 : 1,
+      alphaTest: see ? 0.4 : 0, side: see ? THREE.DoubleSide : THREE.FrontSide });
+    return G.mats[name];
+  }
+  function setupGame() {
+    var cv = document.getElementById('gcv');
+    var r = new THREE.WebGLRenderer({ canvas: cv, antialias: false });
+    r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    var scene = new THREE.Scene();
+    scene.background = new THREE.Color('#8fd0f7');
+    scene.fog = new THREE.Fog('#8fd0f7', 18, 46);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x6a8f4a, 0.85));
+    var sun = new THREE.DirectionalLight(0xffffff, 0.55); sun.position.set(8, 20, 6); scene.add(sun);
+    var cam = new THREE.PerspectiveCamera(70, 1, 0.05, 120);
+    cam.rotation.order = 'YXZ';
+    G = { r: r, scene: scene, cam: cam, mats: {}, geo: new THREE.BoxGeometry(1, 1, 1), torchGeo: new THREE.BoxGeometry(0.2, 0.7, 0.2),
+      blocks: {}, meshes: [], people: [], pos: new THREE.Vector3(), vy: 0, onGround: false, yaw: 0, pitch: -0.15, joy: { x: 0, y: 0 }, keys: {},
+      pick: '판자', counts: {}, running: false, last: 0, dirty: false, saving: false, again: false, timer: null };
+    
+    var W = S.size.w, D = S.size.d;
+    var gt = texture('풀'); gt.wrapS = gt.wrapT = THREE.RepeatWrapping; gt.repeat.set(W, D);
+    var ground = new THREE.Mesh(new THREE.PlaneGeometry(W, D), new THREE.MeshLambertMaterial({ map: gt }));
+    ground.rotation.x = -Math.PI / 2; ground.position.set(W / 2, 0, D / 2); ground.userData.ground = true;
+    scene.add(ground); G.ground = ground;
+    var outside = new THREE.Mesh(new THREE.PlaneGeometry(160, 160), new THREE.MeshLambertMaterial({ color: '#5a9a2c' }));
+    outside.rotation.x = -Math.PI / 2; outside.position.set(W / 2, -0.02, D / 2); scene.add(outside);
+    
+    var edge = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(W, 0.05, D)), new THREE.LineBasicMaterial({ color: '#3a2a1a' }));
+    edge.position.set(W / 2, 0.03, D / 2); scene.add(edge);
+    setupControls();
+    window.addEventListener('resize', resizeGame);
+  }
+  function resizeGame() {
+    if (!G) return;
+    var w = window.innerWidth, h = window.innerHeight;
+    G.r.setSize(w, h, false); G.cam.aspect = w / h;
+    G.cam.fov = w < h ? 85 : 70;              
+    G.cam.updateProjectionMatrix();
+  }
+  function key(x, y, z) { return x + ',' + y + ',' + z; }
+   
+  var FRAME_WOOD = null;
+  function frameMesh(b) {
+    var at = String(b).split('@')[1] || 'z', axis = at.charAt(0), sign = at.charAt(1);
+    var no = Number(base(b).slice(3));
+    FRAME_WOOD = FRAME_WOOD || new THREE.MeshLambertMaterial({ color: '#7a4e25' });
+    var pic = drawingMat(no);
+    var geo = axis === 'x' ? new THREE.BoxGeometry(0.06, 0.9, 0.9) : new THREE.BoxGeometry(0.9, 0.9, 0.06);
+    var mats = axis === 'x' ? [pic, pic, FRAME_WOOD, FRAME_WOOD, FRAME_WOOD, FRAME_WOOD] : [FRAME_WOOD, FRAME_WOOD, FRAME_WOOD, FRAME_WOOD, pic, pic];
+    var m = new THREE.Mesh(geo, mats);
+    m.userData.offset = sign ? (sign === '+' ? -0.46 : 0.46) : 0;   
+    m.userData.axis = axis;
+    return m;
+  }
+  var DRAW_MAT = {};
+  function drawingMat(no) {
+    if (DRAW_MAT[no]) return DRAW_MAT[no];
+    var mat = new THREE.MeshBasicMaterial({ color: '#ffffff' });
+    DRAW_MAT[no] = mat;
+    call('getDrawing', no).then(function (url) {
+      if (!url) return;
+      new THREE.TextureLoader().load(url, function (t) { mat.map = t; mat.needsUpdate = true; });
+    });
+    return mat;
+  }
+  function addBlock(x, y, z, b) {
+    var m;
+    if (isFrame(b)) {
+      m = frameMesh(b);
+      m.position.set(x + 0.5 + (m.userData.axis === 'x' ? m.userData.offset : 0), y + 0.5, z + 0.5 + (m.userData.axis === 'z' ? m.userData.offset : 0));
+    } else if (isDoor(b)) {
+      m = doorMesh(x, y, z, b);
+    } else {
+      m = new THREE.Mesh(b === '횃불' ? G.torchGeo : G.geo, material(b));
+      m.position.set(x + 0.5, b === '횃불' ? y + 0.35 : y + 0.5, z + 0.5);
+    }
+    m.userData = Object.assign(m.userData || {}, { x: x, y: y, z: z, b: b });
+    m.updateMatrixWorld();                     
+    G.scene.add(m); G.meshes.push(m); G.blocks[key(x, y, z)] = m;
+  }
+  /**
+   * 큰 문: 폭 1 × 높이 2 × 두께 0.15 판. 경첩 = 칸의 (x, z) 모서리.
+   * 닫힘 @z = x 쪽으로 펼친 판 · 닫힘 @x = z 쪽으로 펼친 판 · 열림 = 경첩을 축으로 90° 돌아간 모습.
+   * 위 칸이 막혀 있는 옛 문(예전 1칸 문)은 1칸 높이로 그린다.
+   */
+  function doorMesh(x, y, z, b) {
+    var tall = y + 1 < S.size.h && !G.blocks[key(x, y + 1, z)];
+    if (!G.doorGeo) { G.doorGeo = new THREE.BoxGeometry(1, 2, 0.15); G.doorGeo1 = new THREE.BoxGeometry(1, 1, 0.15); }
+    var m = new THREE.Mesh(tall ? G.doorGeo : G.doorGeo1, material(tall ? '큰문' : DOOR));
+    var alongZ = (doorAxis(b) === 'x') !== doorOpen(b);          // 판이 z 쪽으로 펼쳐졌나
+    m.rotation.y = alongZ ? -Math.PI / 2 : 0;
+    m.position.set(alongZ ? x + 0.075 : x + 0.5, y + (tall ? 1 : 0.5), alongZ ? z + 0.5 : z + 0.075);
+    m.userData.tall = tall;
+    return m;
+  }
+  function removeBlock(m) {
+    G.scene.remove(m); G.meshes.splice(G.meshes.indexOf(m), 1); delete G.blocks[key(m.userData.x, m.userData.y, m.userData.z)];
+  }
+  var THREE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+  var threeWait = null;   // 불러오는 중이면 끝나고 부를 함수들
+  function loadThree(done) {
+    if (window.THREE) { done(true); return; }
+    if (threeWait) { threeWait.push(done); return; }
+    threeWait = [done];
+    toast('3D 마을을 불러오는 중…');
+    var sc = document.createElement('script');
+    sc.src = THREE_URL;
+    sc.onload = sc.onerror = function () {
+      var list = threeWait; threeWait = null;
+      if (!window.THREE) sc.parentNode.removeChild(sc);   // 실패하면 다음에 다시 시도
+      list.forEach(function (f) { f(!!window.THREE); });
+    };
+    document.head.appendChild(sc);
+  }
+  function enterGame() {
+    document.getElementById('game').hidden = false;
+    if (!window.THREE) {
+      loadThree(function (ok) {
+        if (!ok) { toast('3D 그림 도구를 불러오지 못했어요. 인터넷을 확인해요.'); return; }
+        if (!document.getElementById('game').hidden) enterGame();   // 그 사이 나가기를 눌렀으면 들어가지 않음
+      });
+      return;
+    }
+    if (!G) setupGame();
+    setMode('village');
+    G.meshes.slice().forEach(removeBlock);
+    S.world.forEach(function (c) { if (!isDoor(c[3])) addBlock(c[0], c[1], c[2], c[3]); });
+    S.world.forEach(function (c) { if (isDoor(c[3])) addBlock(c[0], c[1], c[2], c[3]); });   // 문은 위 칸을 보고 높이를 정한다
+    G.counts = {};
+    BLOCK_ORDER.forEach(function (b) { G.counts[b] = S.bag[b] || 0; });
+    (S.frames || []).forEach(function (f) { G.counts[f.id] = S.bag[f.id] || 0; });
+    spawnVillagers();
+    G.pos.set(S.size.w / 2, 0, S.size.d - 1.5); G.vy = 0; G.yaw = 0; G.pitch = -0.15;
+    document.getElementById('g-save').textContent = '';
+    renderGameHotbar();
+    resizeGame();
+    G.running = true; G.last = performance.now();
+    requestAnimationFrame(loop);
+  }
+  function exitGame() {
+    if (G) { G.running = false; if (G.mode !== 'maze' && (G.dirty || G.saving)) { clearTimeout(G.timer); saveGame(true); return; } }
+    document.getElementById('g-panel').hidden = true;
+    document.getElementById('game').hidden = true;
+    go('village');
+  }
+  function renderGameHotbar() {
+    var hb = '<button class="hb' + (G.pick === '부수기' ? ' on' : '') + '" data-p="부수기">' + icon('부수기') + '부수기</button>';
+    (S.frames || []).forEach(function (f) {
+      hb += '<button class="hb' + (G.pick === f.id ? ' on' : '') + (G.counts[f.id] ? '' : ' zero') + '" data-p="' + esc(f.id) + '">' + icon('액자') +
+        '<span class="c">' + G.counts[f.id] + '</span>' + esc(f.title.slice(0, 4)) + '</button>';
+    });
+    BLOCK_ORDER.forEach(function (b) {
+      hb += '<button class="hb' + (G.pick === b ? ' on' : '') + (G.counts[b] ? '' : ' zero') + '" data-p="' + b + '">' + icon(b) +
+        '<span class="c">' + G.counts[b] + '</span>' + b.replace(' 블록', '') + '</button>';
+    });
+    document.getElementById('g-hotbar').innerHTML = hb;
+  }
+
+  
+  function setupControls() {
+    document.getElementById('g-hotbar').addEventListener('click', function (e) {
+      var b = e.target.closest('.hb'); if (!b) return; G.pick = b.getAttribute('data-p'); renderGameHotbar();
+    });
+    
+    var joy = document.getElementById('joy'), knob = document.getElementById('knob'), jid = null;
+    function joyMove(e) {
+      var r = joy.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+      var len = Math.hypot(dx, dy), max = r.width / 2 - 10;
+      if (len > max) { dx = dx / len * max; dy = dy / len * max; }
+      knob.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+      G.joy.x = dx / max; G.joy.y = dy / max;
+    }
+    joy.addEventListener('pointerdown', function (e) { e.preventDefault(); jid = e.pointerId; joy.setPointerCapture(jid); joyMove(e); });
+    joy.addEventListener('pointermove', function (e) { if (e.pointerId === jid) joyMove(e); });
+    ['pointerup', 'pointercancel'].forEach(function (ev) { joy.addEventListener(ev, function (e) {
+      if (e.pointerId !== jid) return; jid = null; G.joy.x = G.joy.y = 0; knob.style.transform = '';
+    }); });
+    
+    var jump = document.getElementById('g-jump');
+    jump.addEventListener('pointerdown', function (e) { e.preventDefault(); if (G.onGround) G.vy = JUMP; });
+    
+    var cv = document.getElementById('gcv'), touches = {};
+    cv.addEventListener('pointerdown', function (e) {
+      e.preventDefault(); cv.setPointerCapture(e.pointerId);
+      touches[e.pointerId] = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t: performance.now() };
+    });
+    cv.addEventListener('pointermove', function (e) {
+      var p = touches[e.pointerId]; if (!p) return;
+      G.yaw -= (e.clientX - p.x) * 0.006; G.pitch -= (e.clientY - p.y) * 0.006;
+      G.pitch = Math.max(-1.45, Math.min(1.45, G.pitch));
+      p.x = e.clientX; p.y = e.clientY;
+    });
+    function up(e) {
+      var p = touches[e.pointerId]; if (!p) return; delete touches[e.pointerId];
+      if (Math.hypot(e.clientX - p.sx, e.clientY - p.sy) < 12 && performance.now() - p.t < 400) tapAt(e.clientX, e.clientY);
+    }
+    cv.addEventListener('pointerup', up);
+    cv.addEventListener('pointercancel', function (e) { delete touches[e.pointerId]; });
+    
+    window.addEventListener('keydown', function (e) { if (G && G.running) { G.keys[e.code] = true; if (e.code === 'Space' && G.onGround) G.vy = JUMP; } });
+    window.addEventListener('keyup', function (e) { if (G) G.keys[e.code] = false; });
+  }
+
+  
+  var ray = null, ndc = null;
+  function tapAt(cx, cy) {
+    ray = ray || new THREE.Raycaster(); ndc = ndc || new THREE.Vector2();
+    var r = G.r.domElement.getBoundingClientRect();
+    ndc.set((cx - r.left) / r.width * 2 - 1, -(cy - r.top) / r.height * 2 + 1);
+    G.scene.updateMatrixWorld(); G.cam.updateMatrixWorld();   
+    ray.setFromCamera(ndc, G.cam); ray.far = REACH;
+    if (G.mode === 'maze') {   // 미로: 보물 상자만 누를 수 있다
+      if (ray.intersectObject(G.mz.chest).length) mazeWin(); else toast('보물 상자를 찾아요!');
+      return;
+    }
+    var hit = ray.intersectObjects(G.meshes.concat([G.ground], G.people.map(function (p) { return p.body; })), true)[0];
+    if (!hit) { toast('조금 더 가까이 가요!'); return; }
+    var who = hit.object.userData.villager;
+    if (who) { talk(who); return; }
+    var W = S.size.w, D = S.size.d, H = S.size.h;
+    if (G.pick === '부수기') {
+      if (hit.object.userData.ground) { toast('땅은 부술 수 없어요. 블록을 눌러요.'); return; }
+      var b = hit.object.userData.b, kind = base(b), need = S.blocks[kind] || 0;
+      if (need > S.tier) { toast(josa(TIER_NAME[need], '이', '가') + ' 있어야 ' + josa(kind, '을', '를') + ' 부술 수 있어요.'); return; }
+      var hu = hit.object.userData;
+      removeBlock(hit.object); G.counts[kind] = (G.counts[kind] || 0) + 1;
+      var below = G.blocks[key(hu.x, hu.y - 1, hu.z)];      // 옛 1칸 문 위 블록을 부수면 그 문은 2칸으로
+      if (below && isDoor(below.userData.b) && !below.userData.tall) { var bu = below.userData; removeBlock(below); addBlock(bu.x, bu.y, bu.z, bu.b); }
+    } else if (!hit.object.userData.ground && isDoor(hit.object.userData.b)) {   // 문을 톡: 열기 / 닫기
+      var du = hit.object.userData, opening = !doorOpen(du.b);
+      if (!opening && meIn(du.x, du.y, du.z, du.tall ? 2 : 1)) { toast('문 안에 서 있으면 닫을 수 없어요.'); return; }
+      removeBlock(hit.object);
+      addBlock(du.x, du.y, du.z, DOOR + '@' + doorAxis(du.b) + (opening ? 'o' : ''));
+    } else {
+      var x, y, z;
+      var n = null;
+      if (hit.object.userData.ground) { x = Math.floor(hit.point.x); y = 0; z = Math.floor(hit.point.z); }
+      else {
+        n = hit.face.normal; var u = hit.object.userData;
+        x = u.x + Math.round(n.x); y = u.y + Math.round(n.y); z = u.z + Math.round(n.z);
+      }
+      if (x < 0 || x >= W || z < 0 || z >= D || y < 0) { toast('마을 밖에는 놓을 수 없어요.'); return; }
+      if (y >= H) { toast('더 높이는 못 쌓아요.'); return; }
+      var occ = cellAt(x, y, z);
+      if (occ) { if (occ !== G.blocks[key(x, y, z)]) toast('문 위에는 블록을 못 놓아요.'); return; }
+      if (!G.counts[G.pick]) { toast(josa(G.pick, '이', '가') + ' 없어요. 상자를 열거나 만들어요!'); return; }
+      if (G.pick === DOOR && (y + 1 >= H || cellAt(x, y + 1, z))) { toast('문을 세울 자리가 좁아요.'); return; }
+      if (!PASS[G.pick] && !isFrame(G.pick) && meIn(x, y, z, G.pick === DOOR ? 2 : 1)) { toast('내가 서 있는 자리에는 못 놓아요.'); return; }
+      var put = G.pick;
+      if (G.pick === DOOR) put += Math.abs(Math.sin(G.yaw)) > Math.abs(Math.cos(G.yaw)) ? '@x' : '@z';   // 보는 쪽을 막는 방향
+      else if (isFrame(G.pick)) {   
+        if (n && Math.round(n.y) === 0) put += Math.round(n.x) ? '@x' + (n.x > 0 ? '+' : '-') : '@z' + (n.z > 0 ? '+' : '-');
+        else put += Math.abs(Math.sin(G.yaw)) > Math.abs(Math.cos(G.yaw)) ? '@x' : '@z';
+      }
+      addBlock(x, y, z, put); G.counts[G.pick]--;
+    }
+    changed();
+  }
+  /** 마을이 바뀜 → 가방 줄 다시 그리고 1.5초 뒤 저장 */
+  function changed() {
+    renderGameHotbar();
+    G.dirty = true;
+    document.getElementById('g-save').textContent = '…';
+    clearTimeout(G.timer); G.timer = setTimeout(function () { saveGame(false); }, 1500);
+  }
+  /** 내 몸이 (x, y~y+h, z) 칸에 걸쳐 있나 */
+  function meIn(x, y, z, h) {
+    return x + 1 > G.pos.x - HALF && x < G.pos.x + HALF && z + 1 > G.pos.z - HALF && z < G.pos.z + HALF && y + h > G.pos.y && y < G.pos.y + TALL;
+  }
+  
+  var SHIRTS = ['#d23b2b', '#2f7fd8', '#3f8f3a', '#8e5ad6', '#f28c28', '#e05aa0'];
+  function nameTag(text) {
+    var cv = document.createElement('canvas'); cv.width = 256; cv.height = 64;
+    var c = cv.getContext('2d');
+    c.fillStyle = 'rgba(0,0,0,.55)'; c.fillRect(0, 8, 256, 48);
+    c.fillStyle = '#fff'; c.font = 'bold 34px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, 128, 33);
+    var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(cv), depthTest: false }));
+    sp.scale.set(1.2, 0.3, 1);
+    sp.raycast = function () {};   
+    return sp;
+  }
+  function spawnVillagers() {
+    (G.people || []).forEach(function (p) { G.scene.remove(p.g); });
+    G.people = [];
+    (S.villagers || []).forEach(function (v, i) {
+      var g = new THREE.Group(), shirt = SHIRTS[i % SHIRTS.length];
+      var body = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.65, 0.3), new THREE.MeshLambertMaterial({ color: shirt }));
+      body.position.y = 0.85;
+      var head = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.42), new THREE.MeshLambertMaterial({ color: '#f1c27d' }));
+      head.position.y = 1.4;
+      var legs = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.52, 0.26), new THREE.MeshLambertMaterial({ color: '#3a4a7a' }));
+      legs.position.y = 0.26;
+      var hair = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.12, 0.44), new THREE.MeshLambertMaterial({ color: '#3a2a1a' }));
+      hair.position.y = 1.62;
+      var tag = nameTag(v.name); tag.position.y = 2.05;
+      [body, head, legs, hair].forEach(function (m) { m.userData.villager = v; g.add(m); });
+      g.add(tag);
+      var p = { g: g, body: g, v: v, x: 1 + (i * 3.7) % (S.size.w - 2), z: 1 + (i * 5.3) % (S.size.d - 2), tx: 0, tz: 0, wait: 0 };
+      g.position.set(p.x, 0, p.z);
+      G.scene.add(g); G.people.push(p);
+    });
+  }
+  function freeCell(x, z) {
+    for (var y = 0; y < 2; y++) if (solid(Math.floor(x), y, Math.floor(z))) return false;
+    return true;
+  }
+  function moveVillagers(dt) {
+    (G.people || []).forEach(function (p) {
+      if (p.wait > 0) { p.wait -= dt; return; }
+      var dx = p.tx - p.x, dz = p.tz - p.z, d = Math.hypot(dx, dz);
+      if (d < 0.1 || !p.tx) { p.tx = 0.6 + Math.random() * (S.size.w - 1.2); p.tz = 0.6 + Math.random() * (S.size.d - 1.2); p.wait = 1 + Math.random() * 2; return; }
+      var nx = p.x + dx / d * 0.9 * dt, nz = p.z + dz / d * 0.9 * dt;
+      if (!freeCell(nx, nz)) { p.tx = 0; p.wait = 0.5; return; }   
+      p.x = nx; p.z = nz;
+      p.g.position.set(p.x, 0, p.z); p.g.rotation.y = Math.atan2(dx, dz);
+    });
+  }
+  function talk(v) {
+    toast(v.comment ? '💬 ' + v.name + ': 「엄마·아빠가 그러는데… ' + v.comment + '」' : '💬 ' + v.name + ': 「안녕! 나는 「' + v.book + '」에서 왔어!」');
+  }
+
+  function currentWorld() { return G.meshes.map(function (m) { var u = m.userData; return [u.x, u.y, u.z, u.b]; }); }
+  function saveGame(thenExit) {
+    if (G.saving) { G.again = true; G.exitAfter = G.exitAfter || thenExit; return; }
+    G.saving = true; G.dirty = false;
+    document.getElementById('g-save').textContent = '저장하는 중…';
+    serial('saveWorld', [currentWorld()]).then(function (r) {
+      G.saving = false;
+      if (!busy() || !r.ok) useState(r.state);   // 저장한 마을·가방이 담긴 새 상태(줄에 남은 호출이 있으면 그 마지막 응답이 더 새것)
+      if (!r.ok) { toast(r.message); }
+      document.getElementById('g-save').textContent = r.ok ? '저장했어요 ✓' : '';
+      if (G.again) { G.again = false; saveGame(G.exitAfter); return; }
+      if (thenExit || G.exitAfter || !r.ok) {
+        G.exitAfter = false;
+        if (!r.ok) { if (r.state) { enterGame(); return; } return call('getState').then(function (s) { useState(s); enterGame(); }); }  
+        document.getElementById('game').hidden = true; go('village');
+      }
+    }).catch(function (e) { G.saving = false; oops(e); });
+  }
+
+  
+  function solid(x, y, z) {
+    if (y < 0) return true;
+    if (G.mode === 'maze') return y < 2 && !!G.mz.wall[x + ',' + z];
+    var m = cellAt(x, y, z);
+    if (!m) return false;
+    if (isDoor(m.userData.b)) return !doorOpen(m.userData.b);
+    return !PASS[base(m.userData.b)] && !isFrame(m.userData.b);
+  }
+  function hits(p) {
+    var W = G.mode === 'maze' ? G.mz.n : S.size.w, D = G.mode === 'maze' ? G.mz.n : S.size.d;
+    if (p.x - HALF < 0 || p.x + HALF > W || p.z - HALF < 0 || p.z + HALF > D) return true;
+    for (var x = Math.floor(p.x - HALF); x <= Math.floor(p.x + HALF - 1e-6); x++)
+      for (var y = Math.floor(p.y); y <= Math.floor(p.y + TALL - 1e-6); y++)
+        for (var z = Math.floor(p.z - HALF); z <= Math.floor(p.z + HALF - 1e-6); z++)
+          if (solid(x, y, z)) return true;
+    return false;
+  }
+  function step(dt) {
+    var f = -G.joy.y, s = G.joy.x;
+    if (G.keys.KeyW || G.keys.ArrowUp) f += 1;
+    if (G.keys.KeyS || G.keys.ArrowDown) f -= 1;
+    if (G.keys.KeyD || G.keys.ArrowRight) s += 1;
+    if (G.keys.KeyA || G.keys.ArrowLeft) s -= 1;
+    var len = Math.hypot(f, s); if (len > 1) { f /= len; s /= len; }
+    var sin = Math.sin(G.yaw), cos = Math.cos(G.yaw);
+    var dx = (-sin * f + cos * s) * SPEED * dt, dz = (-cos * f - sin * s) * SPEED * dt;
+    var p = G.pos.clone();
+    p.x += dx; if (hits(p)) p.x -= dx;
+    p.z += dz; if (hits(p)) p.z -= dz;
+    G.vy -= GRAVITY * dt; if (G.vy < -20) G.vy = -20;
+    var dy = G.vy * dt; p.y += dy;
+    G.onGround = false;
+    if (hits(p)) { p.y -= dy; if (G.vy < 0) G.onGround = true; G.vy = 0; }
+    G.pos.copy(p);
+    G.cam.position.set(p.x, p.y + EYE, p.z);
+    G.cam.rotation.set(G.pitch, G.yaw, 0);
+  }
+  function loop(now) {
+    if (!G.running) return;
+    var dt = Math.min(0.05, (now - G.last) / 1000); G.last = now;
+    step(dt);
+    if (G.mode === 'maze') { mazeTick(); if (!G.running) return; G.r.render(G.mz.scene, G.cam); }
+    else { moveVillagers(dt); G.r.render(G.scene, G.cam); }
+    requestAnimationFrame(loop);
+  }
+
+  // ===== 마을 / 보물 미로 모드 =====
+  function setMode(mode) {
+    G.mode = mode;
+    var village = mode === 'village';
+    document.getElementById('g-hotbar').style.display = village ? '' : 'none';
+    document.getElementById('g-mazebtn').style.display = village ? '' : 'none';
+    document.getElementById('g-panel').hidden = true;
+    document.getElementById('g-hint').textContent = village ? '블록을 톡 누르면 ⛏ 부수기 / 🧱 놓기' : '미로 어딘가의 보물 상자를 찾아요!';
+    document.getElementById('g-save').textContent = '';
+  }
+  /** 같은 시드 = 같은 난수(미로 시험용) */
+  function seededRand(seed) {
+    var a = seed >>> 0;
+    return function () { a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  }
+  /**
+   * 완전 미로(모든 칸이 이어지고 고리 없음): 칸 c×c, 벽 포함 격자 n×n(n = 2c+1) · 깊이 우선 백트래킹.
+   * wall[gx][gz] = 참이면 벽. 칸은 홀수 좌표(1, 3, …).
+   */
+  function makeMaze(c, rand) {
+    var n = 2 * c + 1, wall = [], i, j;
+    for (i = 0; i < n; i++) { wall.push([]); for (j = 0; j < n; j++) wall[i].push(true); }
+    var seen = { '0,0': 1 }, stack = [[0, 0]];
+    wall[1][1] = false;
+    while (stack.length) {
+      var cur = stack[stack.length - 1], next = [];
+      [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (d) {
+        var nx = cur[0] + d[0], nz = cur[1] + d[1];
+        if (nx >= 0 && nz >= 0 && nx < c && nz < c && !seen[nx + ',' + nz]) next.push([nx, nz]);
+      });
+      if (!next.length) { stack.pop(); continue; }
+      var nb = next[Math.floor(rand() * next.length)];
+      seen[nb[0] + ',' + nb[1]] = 1;
+      wall[2 * nb[0] + 1][2 * nb[1] + 1] = false;
+      wall[cur[0] + nb[0] + 1][cur[1] + nb[1] + 1] = false;   // 두 칸 사이 벽을 뚫는다
+      stack.push(nb);
+    }
+    return { n: n, c: c, wall: wall };
+  }
+  /** 격자 칸 (sx, sz) 에서 길로 가장 먼 칸(너비 우선 탐색) */
+  function farthestCell(mz, sx, sz) {
+    var dist = {}, q = [[sx, sz]], best = [sx, sz, 0];
+    dist[sx + ',' + sz] = 0;
+    while (q.length) {
+      var cur = q.shift(), d0 = dist[cur[0] + ',' + cur[1]];
+      if (d0 > best[2]) best = [cur[0], cur[1], d0];
+      [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (d) {
+        var x = cur[0] + d[0], z = cur[1] + d[1], k = x + ',' + z;
+        if (x < 0 || z < 0 || x >= mz.n || z >= mz.n || mz.wall[x][z] || k in dist) return;
+        dist[k] = d0 + 1; q.push([x, z]);
+      });
+    }
+    return { x: best[0], z: best[1], dist: best[2] };
+  }
+  function enterMaze() {
+    document.getElementById('game').hidden = false;
+    if (!window.THREE) {
+      loadThree(function (ok) {
+        if (!ok) { toast('3D 그림 도구를 불러오지 못했어요. 인터넷을 확인해요.'); return; }
+        if (!document.getElementById('game').hidden) enterMaze();
+      });
+      return;
+    }
+    if (!G) setupGame();
+    setMode('maze');
+    buildMaze(makeMaze(9, Math.random));
+    resizeGame();
+    G.running = true; G.last = performance.now();
+    requestAnimationFrame(loop);
+  }
+  /** 미로 장면: 벽은 InstancedMesh 하나(칸마다 Mesh 를 만들지 않음) · 바닥 풀 · 입구에서 가장 먼 칸에 보물 상자 */
+  function buildMaze(mz) {
+    var n = mz.n, MAXN = 19;
+    if (!G.mz) {
+      var sc = new THREE.Scene();
+      sc.background = new THREE.Color('#8fd0f7');
+      sc.fog = new THREE.Fog('#8fd0f7', 18, 46);
+      sc.add(new THREE.HemisphereLight(0xffffff, 0x6a8f4a, 0.85));
+      var sun = new THREE.DirectionalLight(0xffffff, 0.55); sun.position.set(8, 20, 6); sc.add(sun);
+      var gt = texture('풀'); gt.wrapS = gt.wrapT = THREE.RepeatWrapping;
+      var ground = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshLambertMaterial({ map: gt }));
+      ground.rotation.x = -Math.PI / 2; sc.add(ground);
+      var walls = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 2, 1), material('돌벽돌'), MAXN * MAXN);
+      walls.frustumCulled = false;   // 인스턴스가 흩어져 있어 원본 상자 기준으로 잘리면 안 됨
+      sc.add(walls);
+      var chest = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.6, 0.7), new THREE.MeshLambertMaterial({ map: texture('상자') }));
+      sc.add(chest);
+      G.mz = { scene: sc, ground: ground, gt: gt, walls: walls, chest: chest };
+    }
+    var Z = G.mz, mat = new THREE.Matrix4(), k = 0;
+    mz.wall[1][0] = false;                                  // 입구(시작 칸 바로 앞 바깥벽)
+    Z.wall = {};
+    for (var gx = 0; gx < n; gx++) for (var gz = 0; gz < n; gz++) if (mz.wall[gx][gz]) {
+      Z.wall[gx + ',' + gz] = true;
+      mat.makeTranslation(gx + 0.5, 1, gz + 0.5); Z.walls.setMatrixAt(k++, mat);
+    }
+    Z.walls.count = k; Z.walls.instanceMatrix.needsUpdate = true;
+    Z.ground.scale.set(n, n, 1); Z.ground.position.set(n / 2, 0, n / 2); Z.gt.repeat.set(n, n);
+    Z.goal = farthestCell(mz, 1, 1);
+    Z.chest.position.set(Z.goal.x + 0.5, 0.3, Z.goal.z + 0.5);
+    Z.n = n; Z.t0 = performance.now(); Z.sec = -1; Z.won = false;
+    G.pos.set(1.5, 0, 1.5); G.vy = 0; G.yaw = Math.PI; G.pitch = -0.15;   // 입구 칸에서 미로 안쪽(+z)을 본다
+  }
+  function mazeTime() { var t = Math.floor((performance.now() - G.mz.t0) / 1000); return Math.floor(t / 60) + ':' + ('0' + t % 60).slice(-2); }
+  function mazeTick() {
+    var Z = G.mz, sec = Math.floor((performance.now() - Z.t0) / 1000);
+    if (sec !== Z.sec) { Z.sec = sec; document.getElementById('g-save').textContent = '⏱ ' + mazeTime(); }
+    if (Math.floor(G.pos.x) === Z.goal.x && Math.floor(G.pos.z) === Z.goal.z) mazeWin();
+  }
+  /** 보물 상자에 닿음: 축하 화면 + 걸린 시간 · 오늘 받을 수 있으면 서버에서 재료 1개 */
+  function mazeWin() {
+    if (G.mz.won) return;
+    G.mz.won = true; G.running = false;
+    var known = S.maze === 'done' || S.maze === 'noreport';
+    var t = Math.floor((performance.now() - G.mz.t0) / 1000);
+    document.getElementById('game').hidden = true;
+    message('🏆', '보물 상자를 찾았어요!<br>걸린 시간 <b>' + (t >= 60 ? Math.floor(t / 60) + '분 ' : '') + (t % 60) + '초</b><br><span id="maze-reward" class="muted">' +
+      (known ? esc(MAZE_TEXT[S.maze]) : '보물 상자를 여는 중…') + '</span>');
+    if (known) return;   // 오늘 이미 받았거나 독후감을 안 보낸 걸 알면 서버에 묻지 않는다(모르면 서버가 판정)
+    serial('mazeReward').then(function (r) {
+      if (!busy()) useState(r.state);
+      var el = document.getElementById('maze-reward');
+      el.innerHTML = r.ok ? '<i class="ico">' + icon(r.item) + '</i> ' + esc(r.item) + ' 1개를 받았어요! 가방에 넣었어요.'
+        : esc(r.reason === 'done' ? MAZE_TEXT.done : MAZE_TEXT.noreport);
+    }, function () { document.getElementById('maze-reward').textContent = '저장하지 못했어요. 다시 해 볼까요?'; });
+  }
+
+  // ===== 마을에 미로 짓기 =====
+  var MB = { size: 7, block: '', maze: null };
+  var MB_SIZES = [[7, '작은'], [11, '중간'], [15, '큰']];
+  function openMazeBuilder() {
+    if (!G || G.mode !== 'village') return;
+    MB.maze = null;
+    renderMazeBuilder();
+    document.getElementById('g-panel').hidden = false;
+  }
+  function closeMazeBuilder() { document.getElementById('g-panel').hidden = true; }
+  function mbSize(n) { MB.size = n; MB.maze = null; renderMazeBuilder(); }
+  function mbBlock(b) { MB.block = b; renderMazeBuilder(); }
+  /** 벽으로 쓸 수 있는 블록(가방에 있는 놓을 수 있는 블록 · 문·횃불·액자 빼고) */
+  function mbBlocks() { return BLOCK_ORDER.filter(function (b) { return b !== DOOR && b !== '횃불' && (G.counts[b] || 0) > 0; }); }
+  /** 크기 n 미로(입구·출구 한 칸씩 뚫음) — 격자 (i 앞쪽, j 옆쪽) */
+  function mbMaze(n, rand) {
+    var mz = makeMaze((n - 1) / 2, rand), mid = 2 * Math.floor((n - 1) / 4) + 1;
+    mz.wall[0][mid] = false; mz.wall[n - 1][mid] = false;
+    var walls = 0;
+    for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) if (mz.wall[i][j]) walls++;
+    mz.need = walls * 2;   // 높이 2
+    return mz;
+  }
+  /** 내 앞 빈 땅에 놓을 자리: 격자 전체가 마을 안이고 y=0·1 칸이 모두 비어 있어야(내 몸과도 안 겹치게) */
+  function mbSpot(n) {
+    var W = S.size.w, D = S.size.d, sin = Math.sin(G.yaw), cos = Math.cos(G.yaw);
+    var fx = 0, fz = 0;                                     // 보는 쪽(앞) 한 축
+    if (Math.abs(sin) > Math.abs(cos)) fx = sin > 0 ? -1 : 1; else fz = cos > 0 ? -1 : 1;
+    var lx = fz !== 0 ? 1 : 0, lz = fx !== 0 ? 1 : 0;       // 옆 축
+    var px = Math.floor(G.pos.x), pz = Math.floor(G.pos.z);
+    var lat = (lx ? px : pz) - (n - 1) / 2;                 // 옆으로는 가운데, 마을 밖이면 안쪽으로 당김
+    lat = Math.max(0, Math.min((lx ? W : D) - n, lat));
+    var cells = [];
+    for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) {
+      var x = fx ? px + fx * (1 + i) : lat + j, z = fz ? pz + fz * (1 + i) : lat + j;
+      if (x < 0 || x >= W || z < 0 || z >= D) return null;
+      for (var y = 0; y < 2; y++) if (cellAt(x, y, z) || meIn(x, y, z, 1)) return null;
+      cells.push([i, j, x, z]);
+    }
+    return cells;
+  }
+  function renderMazeBuilder() {
+    var blocks = mbBlocks();
+    if (blocks.indexOf(MB.block) < 0) MB.block = blocks[0] || '';
+    if (!MB.maze || MB.maze.n !== MB.size) MB.maze = mbMaze(MB.size, Math.random);
+    var have = G.counts[MB.block] || 0, need = MB.maze.need;
+    var html = '<h3>🧱 미로 짓기</h3><div class="muted">크기</div><div class="chips">' + MB_SIZES.map(function (s) {
+      return '<button class="chip' + (MB.size === s[0] ? ' on' : '') + '" onclick="mbSize(' + s[0] + ')">' + s[1] + ' ' + s[0] + '×' + s[0] + '</button>';
+    }).join('') + '</div>';
+    if (!blocks.length) html += '<p>미로를 지을 블록이 없어요. 상자를 열거나 만들어요!</p>';
+    else {
+      html += '<div class="muted" style="margin-top:8px">벽 블록 · 높이 2</div><div class="chips">' + blocks.map(function (b) {
+        return '<button class="chip' + (MB.block === b ? ' on' : '') + '" onclick="mbBlock(\'' + b + '\')">' + icon(b) + esc(b) + ' ' + G.counts[b] + '</button>';
+      }).join('') + '</div><p>필요한 블록 <b>' + need + '</b>개 / 가진 수 <b>' + have + '</b>개</p>';
+    }
+    html += '<p class="err" id="mb-msg"></p><div class="row2">' + (blocks.length ? '<button class="btn" onclick="buildMazeWalls()">짓기</button>' : '') +
+      '<button class="btn gray" onclick="closeMazeBuilder()">닫기</button></div>';
+    document.getElementById('g-panel').innerHTML = html;
+  }
+  /** 짓기: 미로 벽을 마을 블록으로 놓고 가방에서 뺀다 → 자동 저장(서버 checkWorld 가 다시 검사) */
+  function buildMazeWalls() {
+    var msg = document.getElementById('mb-msg'), b = MB.block, mz = MB.maze;
+    var have = G.counts[b] || 0;
+    if (have < mz.need) { msg.textContent = josa(b, '이', '가') + ' ' + (mz.need - have) + '개 더 필요해요.'; return false; }
+    var cells = mbSpot(mz.n);
+    if (!cells) { msg.textContent = '자리가 좁아요. 넓은 곳으로 가서 해 봐요.'; return false; }
+    cells.forEach(function (c) { if (mz.wall[c[0]][c[1]]) { addBlock(c[2], 0, c[3], b); addBlock(c[2], 1, c[3], b); } });
+    G.counts[b] = have - mz.need;
+    closeMazeBuilder();
+    changed();
+    toast('미로를 지었어요! 입구로 들어가 봐요.');
+    return true;
+  }
+
+  
+  function renderBooks() {
+    document.getElementById('books').innerHTML = S.books.length ? S.books.map(function (b) {
+      return '<div class="book"><div><b>' + esc(b.title) + '</b><div class="muted">독후감 ' + b.count + '번 · 마지막 ' + esc(b.last) + '</div></div>' +
+        '<div class="st">' + '★★★★★'.slice(0, b.stars) + '</div></div>';
+    }).join('') : '<p class="muted">아직 없어요. 첫 독후감을 써 봐요!</p>';
+    document.querySelectorAll('.gname').forEach(function (x) { x.textContent = S.gift.name; });
+    document.getElementById('album').innerHTML = S.gift.album.length ? S.gift.album.map(function (a) {
+      return '<div class="sticker"><b>' + esc(a.memo || '띠부씰') + '</b>독후감 ' + a.count + '개 · ' + esc(a.date) + '</div>';
+    }).join('') : '<p class="muted">독후감 ' + S.gift.every + '개를 확인받으면 첫 선물을 받아요!</p>';
+  }
+
+  
+  var COLORS = ['#222', '#d23b2b', '#f28c28', '#f2c230', '#3f8f3a', '#2f7fd8', '#8b5a2b'];
+  var pen = { color: COLORS[0], drawing: false, last: null, used: false, erase: false };
+  var canvas = document.getElementById('pad'), ctx = canvas.getContext('2d');
+  (function setup() {
+    document.getElementById('w-moods').innerHTML = Object.keys(MOOD_FACE).map(function (m) {
+      return '<button class="mood" data-m="' + m + '" onclick="pickMood(this)"><b>' + MOOD_FACE[m] + '</b>' + m + '</button>';
+    }).join('');
+    document.getElementById('w-stars').innerHTML = [1, 2, 3, 4, 5].map(function (n) {
+      return '<button class="star" data-n="' + n + '" onclick="pickStars(' + n + ')">★</button>';
+    }).join('');
+    var bar = document.getElementById('w-colors');
+    COLORS.slice().reverse().forEach(function (c) {
+      var b = document.createElement('button');
+      b.className = 'color' + (c === pen.color ? ' on' : '');
+      b.style.background = c;
+      b.onclick = function () { pen.color = c; pen.erase = false; bar.querySelectorAll('.color').forEach(function (x) { x.classList.toggle('on', x === b); }); };
+      bar.insertBefore(b, bar.firstChild);
+    });
+    // 지우개: 누르면 지우개 모드, 색을 누르면 다시 펜
+    var er = document.createElement('button');
+    er.className = 'color eraser'; er.textContent = '지우개'; er.id = 'w-eraser';
+    er.onclick = function () { pen.erase = true; bar.querySelectorAll('.color').forEach(function (x) { x.classList.toggle('on', x === er); }); };
+    bar.insertBefore(er, bar.querySelector('.small'));
+    ['w-scene', 'w-think'].forEach(function (id) { document.getElementById(id).addEventListener('input', countChars); });
+  })();
+  function startWrite() {
+    W = { mood: '', stars: 0 };
+    document.getElementById('w-date').textContent = (+S.today.slice(5, 7)) + '월 ' + (+S.today.slice(8, 10)) + '일';
+    ['w-title', 'w-hero', 'w-scene', 'w-think'].forEach(function (id) { document.getElementById(id).value = ''; });
+    document.getElementById('w-recent').innerHTML = S.recentTitles.map(function (t) {
+      return '<button class="chip" onclick="document.getElementById(\'w-title\').value=this.textContent">' + esc(t) + '</button>';
+    }).join('');
+    document.querySelectorAll('.mood').forEach(function (b) { b.classList.remove('on'); });
+    pickStars(0);
+    document.getElementById('w-err').textContent = '';
+    show('s-write');
+    sizePad();
+    countChars();
+  }
+  function pickMood(b) { W.mood = b.getAttribute('data-m'); document.querySelectorAll('.mood').forEach(function (x) { x.classList.toggle('on', x === b); }); }
+  function pickStars(n) { W.stars = n; document.querySelectorAll('.star').forEach(function (x) { x.classList.toggle('on', +x.getAttribute('data-n') <= n); }); }
+  function countChars() {
+    var n = (document.getElementById('w-scene').value + document.getElementById('w-think').value).replace(/\s/g, '').length;
+    var el = document.getElementById('w-count');
+    el.className = 'count' + (n >= 30 ? ' goal' : '');
+    el.textContent = n >= 30 ? '글자 ' + n + '개 — 30자 넘었어요! 재료 하나 더 🎁' : '글자 ' + n + '개 / 30자 넘으면 재료 하나 더 🎁';
+  }
+  function sizePad() {
+    var r = canvas.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = 5;
+    pen.used = false;
+  }
+  /** 펜: 보통 그리기 5px · 지우개: 그 자리만 지움 18px */
+  function penMode() {
+    ctx.globalCompositeOperation = pen.erase ? 'destination-out' : 'source-over';
+    ctx.lineWidth = pen.erase ? 18 : 5;
+  }
+  function clearPad() { ctx.clearRect(0, 0, canvas.width, canvas.height); pen.used = false; }
+  function pos(e) { var r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+  canvas.addEventListener('pointerdown', function (e) {
+    e.preventDefault(); canvas.setPointerCapture(e.pointerId); pen.drawing = true; pen.last = pos(e);
+    penMode();
+    ctx.fillStyle = pen.color; ctx.beginPath(); ctx.arc(pen.last.x, pen.last.y, pen.erase ? 9 : 2.5, 0, Math.PI * 2); ctx.fill();
+    if (!pen.erase) pen.used = true;   // 지우개만 썼으면 그림 없음
+  });
+  canvas.addEventListener('pointermove', function (e) {
+    if (!pen.drawing) return; e.preventDefault();
+    var p = pos(e); penMode(); ctx.strokeStyle = pen.color; ctx.beginPath(); ctx.moveTo(pen.last.x, pen.last.y); ctx.lineTo(p.x, p.y); ctx.stroke(); pen.last = p;
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) { canvas.addEventListener(ev, function () { pen.drawing = false; }); });
+
+  function exportDrawing() {
+    if (!pen.used) return '';
+    var W2 = 480, H2 = Math.round(480 * canvas.height / canvas.width);
+    var out = document.createElement('canvas'); out.width = W2; out.height = H2;
+    var o = out.getContext('2d'); o.fillStyle = '#fff'; o.fillRect(0, 0, W2, H2); o.drawImage(canvas, 0, 0, W2, H2);
+    return out.toDataURL('image/png');
+  }
+  function submitReport() {
+    var r = { title: document.getElementById('w-title').value, mood: W.mood, stars: W.stars,
+      scene: document.getElementById('w-scene').value, think: document.getElementById('w-think').value,
+      hero: document.getElementById('w-hero').value, drawing: exportDrawing() };
+    var err = !r.title.trim() ? '책 제목을 써 주세요.' : !r.mood ? '기분을 골라 주세요.' : !r.stars ? '별을 눌러 주세요.'
+      : r.scene.replace(/\s/g, '').length < 5 ? '기억에 남는 장면을 조금 더 써 볼까요?' : '';
+    if (err) { document.getElementById('w-err').textContent = err; return; }
+    show('s-wait');
+    call('submitReport', r).then(function (res) {
+      useState(res.state);
+      if (!res.ok) { show('s-write'); document.getElementById('w-err').textContent = res.message; return; }
+      message('📮', '잘했어요, ' + esc(name()) + '!<br>엄마·아빠가 확인하면<br><b>보물 상자</b>가 와요!');
+    }).catch(oops);
+  }
+
+  
+  function openParent() {
+    PARENT_PIN = '';
+    FRESH = false;   // 부모님이 확인하면 상태가 바뀐다
+    document.getElementById('p-dots').textContent = '';
+    document.getElementById('p-err').textContent = '';
+    document.getElementById('p-login').style.display = '';
+    document.getElementById('p-list').innerHTML = '';
+    show('s-parent');
+  }
+  function leaveParent() { PARENT_PIN = ''; go('home'); }
+  (function () {
+    var keys = document.getElementById('p-keys');
+    ['1', '2', '3', '4', '5', '6', '7', '8', '9', '지움', '0', ''].forEach(function (k) {
+      var b = document.createElement('button'); b.textContent = k; if (!k) b.style.visibility = 'hidden';
+      b.onclick = function () {
+        if (k === '지움') PARENT_PIN = PARENT_PIN.slice(0, -1); else if (PARENT_PIN.length < 4) PARENT_PIN += k;
+        document.getElementById('p-dots').textContent = '●'.repeat(PARENT_PIN.length);
+        if (PARENT_PIN.length === 4) loadPending();
+      };
+      keys.appendChild(b);
+    });
+  })();
+  function loadPending() {
+    call('parentList', PARENT_PIN).then(function (r) {
+      document.getElementById('p-login').style.display = 'none';
+      var box = document.getElementById('p-list');
+      var gifts = r.gifts.map(function (g) {
+        return '<div class="card gift ready" id="g-' + g.id + '"><h2>🎁 ' + esc(r.giftName) + ' 줄 차례</h2><p>확인받은 독후감 ' + g.count + '개 달성(' + esc(g.date) + ')</p>' +
+          '<input class="field" id="gm-' + g.id + '" placeholder="어떤 씰을 줬나요? 예) 피카츄"><button class="btn" onclick="giveGift(' + g.id + ')">줬어요</button></div>';
+      }).join('');
+      if (!r.items.length) { box.innerHTML = gifts + '<div class="card"><h2>확인할 독후감이 없어요</h2><p class="muted">아이가 독후감을 보내면 여기 나타나요.</p></div>'; return; }
+      box.innerHTML = gifts + r.items.map(function (x) {
+        return '<div class="card pending" id="p-' + x.no + '"><h2>' + esc(x.date) + ' 「' + esc(x.title) + '」</h2>' +
+          '<p>' + (MOOD_FACE[x.mood] || '') + ' ' + esc(x.mood) + ' · <span style="color:#f2c230">' + '★★★★★'.slice(0, x.stars) + '</span> · 글자 ' + x.chars + '개</p>' +
+          '<p><b>기억에 남는 장면</b><br>' + esc(x.scene) + '</p>' + (x.think ? '<p><b>나라면?</b><br>' + esc(x.think) + '</p>' : '') +
+          (x.hasDrawing ? '<div id="pd-' + x.no + '" class="muted">그림 불러오는 중…</div>' : '') +
+          '<textarea class="field" id="pc-' + x.no + '" placeholder="한마디 남기기(아이 화면에 보여요)" style="min-height:64px;margin-top:10px"></textarea>' +
+          '<div class="row2"><button class="btn" onclick="decide(' + x.no + ',\'good\')">참 잘했어요</button>' +
+          '<button class="btn brown" onclick="decide(' + x.no + ',\'great\')">아주 잘했어요 ⭐</button></div>' +
+          '<button class="btn red" onclick="decide(' + x.no + ',\'redo\')">다시 써 볼까요</button></div>';
+      }).join('');
+      r.items.filter(function (x) { return x.hasDrawing; }).forEach(function (x) {
+        call('parentDrawing', PARENT_PIN, x.no).then(function (url) {
+          document.getElementById('pd-' + x.no).innerHTML = url ? '<img src="' + url + '" alt="그림">' : '';
+        });
+      });
+    }).catch(function (e) {
+      PARENT_PIN = ''; document.getElementById('p-dots').textContent = '';
+      document.getElementById('p-err').textContent = e && e.message ? e.message : '비밀번호가 달라요.';
+    });
+  }
+  function giveGift(id) {
+    var card = document.getElementById('g-' + id), memo = document.getElementById('gm-' + id).value;
+    card.innerHTML = '<div class="spinner"></div>';
+    call('parentGiveGift', PARENT_PIN, id, memo).then(function (r) {
+      card.innerHTML = '<h2>' + (r.ok ? '🎁 아이의 씰 모음에 넣었어요' : esc(r.message)) + '</h2>';
+    }).catch(function (e) { card.innerHTML = '<p class="err">' + esc(e.message || e) + '</p>'; });
+  }
+  function decide(no, d) {
+    var comment = document.getElementById('pc-' + no).value;
+    var card = document.getElementById('p-' + no);
+    card.innerHTML = '<div class="spinner"></div>';
+    call('parentDecide', PARENT_PIN, no, d, comment).then(function (r) {
+      card.innerHTML = '<h2>' + (r.ok ? (d === 'redo' ? '✏️ 다시 써 보자고 전했어요' : '🎁 보물 상자를 보냈어요' + (r.streak ? ' (연속 ' + r.streak + '일)' : '')) : esc(r.message)) + '</h2>' +
+        (r.ok && r.gift ? '<p><b>독후감 ' + r.approvedCount + '개 달성! 선물 줄 차례예요.</b> 다시 비밀번호를 넣으면 「줬어요」를 누를 수 있어요.</p>' : '');
+    }).catch(function (e) { card.innerHTML = '<p class="err">' + esc(e.message || e) + '</p>'; });
+  }
+
+  
+  [['home', '상자', '홈'], ['bag', '가방', '가방'], ['craft', '작업대', '만들기'], ['village', '집', '마을'], ['books', '책', '책장']].forEach(function (x) {
+    document.getElementById('n-' + x[0]).innerHTML = icon(x[1]) + x[2];
+  });
+  go('home');
+</script>
+</body>
+</html>
